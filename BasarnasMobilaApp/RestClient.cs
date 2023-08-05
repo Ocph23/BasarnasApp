@@ -15,7 +15,7 @@ namespace BasarnasMobilaApp
             _ = SetToken(Account.Token);
         }
 
-        private Task SetToken(string token)
+        public Task SetToken(string token)
         {
             this.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             return Task.CompletedTask;

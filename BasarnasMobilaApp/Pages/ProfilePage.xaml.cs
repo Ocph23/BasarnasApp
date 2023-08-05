@@ -10,6 +10,7 @@ public partial class ProfilePage : ContentPage
 	public ProfilePage()
 	{
 		InitializeComponent();
+        BindingContext = new ProfileViewModel();
 	}
 }
 
@@ -18,13 +19,44 @@ public class ProfileViewModel : BaseViewModel
 
     public Pelapor Model { get; set; } = new Pelapor();
 
+    private ImageSource photo = ImageSource.FromFile("noimage.jpg");
+
+    public ImageSource Photo
+    {
+        get { return photo; }
+        set { SetProperty(ref photo, value); }
+    }
+
     public ProfileViewModel()
     {
+        TakePhotoCommand = new Command(async () => await TakePhoto());
         validator = new ProfileValidator();
         UpdateProfileCommand = new Command(ProfileAction, ProfileValidate);
+        Model = Account.GetProfile();
         Model.PropertyChanged += (s, p) => {
             UpdateProfileCommand = new Command(ProfileAction, ProfileValidate);
         };
+    }
+
+    public async Task TakePhoto()
+    {
+        try
+        {
+            if (MediaPicker.Default.IsCaptureSupported)
+            {
+
+                var result  = await Helper.TakePhoto();
+                if (result != null)
+                {
+                    Model.PhotoData = result;
+                    Photo = ImageSource.FromStream(() => new MemoryStream(Model.PhotoData));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await Helper.ShellMessageShow("Error", ex.Message);
+        }
     }
 
     private async void ProfileAction(object obj)
@@ -74,6 +106,8 @@ public class ProfileViewModel : BaseViewModel
         get { return password; }
         set { SetProperty(ref password, value); }
     }
+
+    public Command TakePhotoCommand { get; }
 
     private ProfileValidator validator;
 

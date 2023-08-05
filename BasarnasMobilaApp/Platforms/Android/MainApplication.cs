@@ -1,5 +1,27 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
+using Android.OS;
 using Android.Runtime;
+
+[assembly: UsesPermission(Android.Manifest.Permission.AccessCoarseLocation)]
+[assembly: UsesPermission(Android.Manifest.Permission.AccessFineLocation)]
+[assembly: UsesFeature("android.hardware.location", Required = false)]
+[assembly: UsesFeature("android.hardware.location.gps", Required = false)]
+[assembly: UsesFeature("android.hardware.location.network", Required = false)]
+[assembly: UsesPermission(Manifest.Permission.AccessBackgroundLocation)]
+
+[assembly: UsesPermission(Android.Manifest.Permission.ReadExternalStorage, MaxSdkVersion = 32)]
+[assembly: UsesPermission(Android.Manifest.Permission.ReadMediaAudio)]
+[assembly: UsesPermission(Android.Manifest.Permission.ReadMediaImages)]
+[assembly: UsesPermission(Android.Manifest.Permission.ReadMediaVideo)]
+
+// Needed for Taking photo/video
+[assembly: UsesPermission(Android.Manifest.Permission.Camera)]
+[assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage, MaxSdkVersion = 32)]
+
+// Add these properties if you would like to filter out devices that do not have cameras, or set to false to make them optional
+[assembly: UsesFeature("android.hardware.camera", Required = true)]
+[assembly: UsesFeature("android.hardware.camera.autofocus", Required = true)]
 
 namespace BasarnasMobilaApp
 {
@@ -12,5 +34,39 @@ namespace BasarnasMobilaApp
         }
 
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+
+
+
+        public static readonly string ChannelId = "backgroundServiceChannel";
+
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+#pragma warning disable CA1416
+                var serviceChannel =
+                    new NotificationChannel(ChannelId,
+                        "Background Service Channel",
+                    NotificationImportance.High);
+
+                if (GetSystemService(NotificationService)
+                    is NotificationManager manager)
+                {
+                    manager.CreateNotificationChannel(serviceChannel);
+                }
+#pragma warning restore CA1416
+            }
+        }
+
+
+
+
+
+
+
     }
 }

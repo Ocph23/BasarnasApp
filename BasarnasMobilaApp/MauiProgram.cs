@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
+
+
+
 namespace BasarnasMobilaApp
 {
     public static class MauiProgram

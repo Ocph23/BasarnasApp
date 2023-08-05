@@ -25,11 +25,12 @@
                 <StackLayout>
                     <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
                     <Grid ColumnDefinitions="auto,*" >
-                        <Label  Style="{StaticResource Icon}" Text="&#xf084;"></Label>
+                        <Label  Style="{StaticResource Icon}" Text="&#xf023;"></Label>
                         <Entry IsPassword="True" Grid.Column="1" Text="{Binding Password}"></Entry>
                     </Grid>
                 </StackLayout>
             </Frame>
+            <ActivityIndicator WidthRequest="35" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"></ActivityIndicator>
             <Button Margin="0,20" Text="Login" Command="{Binding LoginCommand}"></Button>
             <HorizontalStackLayout>
                 <Label Text="Belum Punya Akun ? "></Label>

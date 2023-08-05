@@ -23,7 +23,7 @@ namespace BasarnasMobilaApp
 
             });
 
-            await hubConnection.StartAsync();
+         
         }
     }
 

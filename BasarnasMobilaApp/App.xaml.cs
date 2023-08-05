@@ -8,6 +8,7 @@ namespace BasarnasMobilaApp
         {
             InitializeComponent();
 
+            
             if(!Account.UserIsLogin)
             {
                 MainPage = Helper.GetService<LoginPage>();

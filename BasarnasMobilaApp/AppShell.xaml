@@ -4,11 +4,39 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:BasarnasMobilaApp"
-    Shell.FlyoutBehavior="Disabled">
+    xmlns:page="clr-namespace:BasarnasMobilaApp.Pages"
+    Shell.TabBarBackgroundColor="WhiteSmoke">
+    <TabBar>
+        <Tab Title="Home" Icon="home.svg">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+        </Tab>
+        <Tab  Title="Laporan" Icon="information.svg" Route="LaporanPage">
+            <ShellContent
+                Title="Laporan"
+                ContentTemplate="{DataTemplate page:LaporanPage}"
+                Route="LaporanPage1" />
+        </Tab>
+        <Tab Title="Baru" Icon="document.svg">
+            <ShellContent
+                Title="Baru"
+                ContentTemplate="{DataTemplate page:LaporanBaruPage}"
+                Route="LaporanBaruPage1" />
+        </Tab>
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+        <Tab  Title="Profile" Icon="usertick.svg">
+            <ShellContent
+                Title="Logout"
+                ContentTemplate="{DataTemplate page:ProfilePage}"
+                Route="LogoutPage1" />
+        </Tab>
+        <Tab  Title="Logout" Icon="logoutcurve.svg">
+            <ShellContent
+                Title="Logout"
+                ContentTemplate="{DataTemplate page:LogoutPage}"
+                Route="LogoutPage" />
+        </Tab>
+    </TabBar>
 </Shell>

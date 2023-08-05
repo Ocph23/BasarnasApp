@@ -77,10 +77,12 @@ namespace BasarnasApp.Server.Controllers
         {
             try
             {
+              
+
                 var model = new Kejadian
                 {
-                    Id = request.Id,
-                    Photo = request.Photo,
+                    Id = request.Id,  
+                    Photo = request.Photo,  
                     Tanggal = request.Tanggal.ToUniversalTime(),
                     LongLat = request.LongLat,
                     Pelapor = new Pelapor { Id = request.PelaporId },
@@ -95,6 +97,15 @@ namespace BasarnasApp.Server.Controllers
                          Id = request.JenisKejadianId,
                      }
                 };
+
+                if (request.DataPhoto != null && request.DataPhoto.Length > 0)
+                {
+                    var logo = await Helper.CreatePhotoKejadian(request.DataPhoto);
+                    model.Photo= logo.File;
+                    model.Thumb = logo.Thumb;
+
+                }
+
                 var result = await _kejadianService.PostAsync(model);
 
                 return Ok(result);

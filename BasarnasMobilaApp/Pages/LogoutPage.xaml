@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasarnasMobilaApp.Pages.LogoutPage"
+             Shell.NavBarIsVisible="False"
+             Title="Logout">
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+
+        <StackLayout VerticalOptions="Center">
+            <Image Margin="0,30" VerticalOptions="Center" 
+                   WidthRequest="75" Source="basarnas.png"></Image>
+        </StackLayout>
+        <Label Text="Apakah Anda Yakin Keluar ? "/>
+
+        <Button Text="Keluar" Command="{Binding LogoutCommand}" BackgroundColor="OrangeRed" Margin="0,30"></Button>
+    </VerticalStackLayout>
+</ContentPage>

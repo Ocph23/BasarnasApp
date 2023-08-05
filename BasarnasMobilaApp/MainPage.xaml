@@ -1,42 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Shell.NavBarIsVisible="False" Padding="50"
              x:Class="BasarnasMobilaApp.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+        <Grid RowDefinitions="auto, *, auto">
+            <VerticalStackLayout>
+                <Image WidthRequest="100" Margin="0,70" Source="basarnas.png"></Image>
+                <Label Margin="0,30" FontSize="Large" Text="Selamat Datang !"></Label>
+                <Label  FontSize="Large" Text="EMERGENCY SYSTEM"></Label>
+                <Label FontSize="Large" Text="KOTA JAYAPURA"></Label>
+                <FlexLayout Direction="Column" AlignItems="End" Margin="0,50">
+                    <Label FontSize="Medium" Text="Butuh Pertolongan ? "></Label>
+                    <Label FontSize="Medium" Text="Laporkan Kepada Kami !"></Label>
+                </FlexLayout>
+            </VerticalStackLayout>
+        </Grid>
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="&#xf2c0;"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                FontFamily="Font Awesome 6 Free Regular"
-                HorizontalOptions="Center" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
-
-        </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

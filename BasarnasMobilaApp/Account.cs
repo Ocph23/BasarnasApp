@@ -48,6 +48,20 @@ public class Account
         }
     }
 
+    internal static Task SetProfile(Pelapor profile)
+    {
+        Preferences.Set("Profile", JsonSerializer.Serialize(profile));
+        return Task.CompletedTask;
+    }
+
+    public static Pelapor GetProfile()
+    {
+        var userString = Preferences.Get("Profile", null);
+        if (string.IsNullOrEmpty(userString))
+            return null;
+        else
+            return JsonSerializer.Deserialize<Pelapor>(userString, Helper.JsonOption);
+    }
 
     public static string Token
     {

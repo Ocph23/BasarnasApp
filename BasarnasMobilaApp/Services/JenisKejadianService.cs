@@ -8,7 +8,7 @@ public class JenisKejadianService : IJenisKejadianService
 
     string controller = "api/jeniskejadian";
     private readonly RestClient _httpClient;
-    private static IEnumerable<JenisKejadianRequest> _sources;
+    private static IEnumerable<JenisKejadianRequest> _sources = Enumerable.Empty<JenisKejadianRequest>();
 
     public JenisKejadianService(RestClient httpClient)
     {
@@ -19,8 +19,15 @@ public class JenisKejadianService : IJenisKejadianService
     {
         try
         {
-            var data = await _httpClient.GetFromJsonAsync<IEnumerable<JenisKejadianRequest>>($"{controller}");
-            return data!;
+            if(!_sources.Any())
+            {
+                var data = await _httpClient.GetFromJsonAsync<IEnumerable<JenisKejadianRequest>>($"{controller}");
+                if (data != null)
+                {
+                    _sources = data;
+                }
+            }
+            return _sources;
         }
         catch (Exception)
         {

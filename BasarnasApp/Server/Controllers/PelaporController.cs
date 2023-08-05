@@ -94,15 +94,25 @@ namespace BasarnasApp.Server.Controllers
         {
             try
             {
-				var Pelapor = new Pelapor
+				var model = new Pelapor
 				{
 					Id = request.Id,
 					Name = request.Name,
 					Email = request.Email,
 					Password = request.Password,
-					Address = request.Address
+					Address = request.Address, 
+                    Photo = request.Photo,
+                    Thumb = request.Thumb
 				};
-				var result = await _pelaporService.PutAsync(id, Pelapor);
+
+                if (request.DataPhoto != null && request.DataPhoto.Length > 0)
+                {
+                    var logo = await Helper.CreatePhotoProfile(request.DataPhoto);
+                    model.Photo= logo.File;
+                    model.Thumb = logo.Thumb;
+                }
+
+				var result = await _pelaporService.PutAsync(id, model);
                 return Ok(result);
             }
             catch (Exception ex)

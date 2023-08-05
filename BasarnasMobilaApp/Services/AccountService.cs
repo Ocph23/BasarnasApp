@@ -23,6 +23,20 @@ namespace BasarnasMobilaApp.Services
                     AuthenticateResponse result = await response.GetResult<AuthenticateResponse>();
                     if (result != null)
                     {
+                        await Account.SetUser(result);
+                        await httpClient.SetToken(result.Token);
+
+                        var profile = await httpClient.GetFromJsonAsync<Pelapor>("api/pelapor/profile");
+                        if(profile != null)
+                        {
+                          _=  Account.SetProfile(profile);
+                        }
+
+
+
+
+
+
                         return result;
                     }
                 }

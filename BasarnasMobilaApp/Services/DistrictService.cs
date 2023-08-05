@@ -9,6 +9,9 @@ public class DistrictService : IDistrictService
     string controller = "api/district";
     private readonly RestClient _httpClient;
 
+    private List<DistrictRequest> _districtRequests = new List<DistrictRequest>();
+
+
     public DistrictService(RestClient httpClient)
     {
         _httpClient = httpClient;
@@ -18,11 +21,17 @@ public class DistrictService : IDistrictService
     {
         try
         {
-         //  await _httpClient.SetToken(_localStorageService);
-            var data = await _httpClient.GetFromJsonAsync<IEnumerable<DistrictRequest>>($"{controller}");
-            return data!;
+            if (_districtRequests.Count <= 0)
+            {
+                var data = await _httpClient.GetFromJsonAsync<IEnumerable<DistrictRequest>>($"{controller}");
+                if (data != null)
+                {
+                    _districtRequests = data.ToList();
+                }
+            }
+            return _districtRequests;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -30,59 +39,61 @@ public class DistrictService : IDistrictService
 
     public async Task<DistrictRequest> GetByIdAsync(int id)
     {
-       try
+        try
         {
             var data = await _httpClient.GetFromJsonAsync<DistrictRequest>($"{controller}/{id}");
             return data!;
         }
         catch (Exception)
         {
-           throw;
+            throw;
         }
     }
 
     public async Task<DistrictRequest> PostAsync(DistrictRequest t)
     {
-       try
+        try
         {
-            var response = await _httpClient.PostAsJsonAsync<DistrictRequest>($"{controller}",t);
-            if(response.IsSuccessStatusCode){
+            var response = await _httpClient.PostAsJsonAsync<DistrictRequest>($"{controller}", t);
+            if (response.IsSuccessStatusCode)
+            {
                 return await response.GetResult<DistrictRequest>();
             }
-            throw new SystemException( await response.GetError());
+            throw new SystemException(await response.GetError());
         }
         catch (Exception)
         {
-           throw;
+            throw;
         }
     }
 
     public async Task<bool> PutAsync(int id, DistrictRequest t)
     {
-       try
+        try
         {
-            var response = await _httpClient.PutAsJsonAsync<DistrictRequest>($"{controller}/{id}",t);
-            if(response.IsSuccessStatusCode){
+            var response = await _httpClient.PutAsJsonAsync<DistrictRequest>($"{controller}/{id}", t);
+            if (response.IsSuccessStatusCode)
+            {
                 return await response.GetResult<bool>();
             }
-            throw new SystemException( await response.GetError());
+            throw new SystemException(await response.GetError());
         }
         catch (Exception)
         {
-           throw;
+            throw;
         }
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-       try
+        try
         {
             var deleted = await _httpClient.DeleteFromJsonAsync<bool>($"{controller}/{id}");
-             return deleted;
+            return deleted;
         }
         catch (Exception)
         {
-           throw;
+            throw;
         }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using BasarnasApp.Shared;
 using BasarnasApp.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BasarnasMobilaApp.Models
 {
@@ -49,6 +44,15 @@ namespace BasarnasMobilaApp.Models
             get { return tanggal; }
             set { SetProperty(ref tanggal, value); }
         }
+
+        private string description;
+
+        public string Description
+        {
+            get { return description; }
+            set { SetProperty(ref description , value); }
+        }
+
         public StatusLaporan Status
         {
             get { return status; }
@@ -59,5 +63,7 @@ namespace BasarnasMobilaApp.Models
             get { return pelapor; }
             set { SetProperty(ref pelapor, value); }
         }
+
+        public byte[] DatPhoto { get;  set; }
     }
 }

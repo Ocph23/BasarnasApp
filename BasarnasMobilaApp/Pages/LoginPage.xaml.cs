@@ -34,21 +34,33 @@ public class LoginViewModel : BaseViewModel
     {
         try
         {
+            IsBusy = true;
             var accountService = Helper.GetService<IAccountService>();
             var login =await accountService.Login(new Models.LoginRequest (UserName,Password));
             if(login != null)
             {
                await Account.SetUser(login);
+                Application.Current.MainPage = new AppShell(); 
+            }
+            else
+            {
+                throw new SystemException("Anda tidak memiliki akses.");
             }
         }
         catch (Exception ex)
         {
-            Application.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok");
+          await  Application.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok");
+        }
+        finally
+        {
+            IsBusy =false;
         }
     }
 
     private bool LoginValidation(object arg)
     {
+        if(IsBusy) 
+            return false;
         var validator = new LoginValidator();
         var validatorResult = validator.Validate(this);
         if (validatorResult.IsValid)
@@ -90,8 +102,6 @@ public class LoginViewModel : BaseViewModel
         get { return loginCommand; }
         set { SetProperty(ref loginCommand, value); }
     }
-
-
 }
 
 

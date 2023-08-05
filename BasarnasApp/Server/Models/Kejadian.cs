@@ -13,6 +13,7 @@ namespace BasarnasApp.Server.Models
         public DateTime Tanggal { get; set; }
         public StatusLaporan Status { get; set; }
         public ICollection<PihakTerkait>? PihakTerkait { get; set; } =new List<PihakTerkait>();
+        public string? Thumb { get;  set; }
         public Pelapor Pelapor { get; set; }
     }
 
