@@ -1,0 +1,107 @@
+﻿@layout AccountLayout
+@page "/account/login"
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@using OcphApiAuth;
+@using OcphApiAuth.Client;
+@using OcphApiAuth.Client.Validators;
+@using System.Text.RegularExpressions
+
+@inject IAccountService accountService
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authStateProvider
+
+@inject  ISnackbar toasService
+
+<MudGrid style="height:100vh;">
+    <MudItem xs="7" style="display: flex; flex-direction:column; justify-content:center; align-items:center; color:white ">
+        <h1>EMERGENCY SYSTEM</h1>
+        <h1>BASARNAS KOTA JAYAPURA</h1>
+          <MudButton class="mt-5"  Variant="Variant.Filled" Color="Color.Primary" 
+                                DisableElevation="true" OnClick="OnValidSubmitAction">Download Android App</MudButton>
+    </MudItem>
+    <MudItem xs="5" style="display: flex; align-items:center">
+           <MudPaper style="height: 60%; width:100%; margin:30px; padding:40px !important" Class="pa-4">
+                <h1 class="mb-5">Login</h1>
+                <MudForm @ref="form" >
+                    <MudTextField T="string" Label="User Name" Required="true" RequiredError="Email is required!" 
+                                        @bind-Value="loginRequest.UserName"
+                                        Validation="@(new System.ComponentModel.DataAnnotations.EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
+                              
+                    <MudTextField class="mt-5" T="string" Label="Password"
+                                            InputType="InputType.Password"
+                                            @bind-Value="loginRequest.Password"
+                                             Required="true"
+                                            RequiredError="Password is required!"/>
+                                
+                    <MudButton class="mt-5" style="width: 100%;" Variant="Variant.Filled" Color="Color.Info" 
+                                DisableElevation="true" OnClick="OnValidSubmitAction">Login</MudButton>
+                        </MudForm>   
+                </MudPaper>
+    </MudItem>
+</MudGrid>
+           
+
+@code {
+
+    MudForm form;
+
+    LoginRequest loginRequest = new LoginRequest();
+
+        protected override void OnAfterRender(bool firstRender)
+        { 
+            if(firstRender){
+                loginRequest = new LoginRequest();
+            }
+            base.OnAfterRender(firstRender);
+        }
+        async Task OnValidSubmitAction()
+    {
+        try
+        {
+            await form.Validate();
+            if(form.IsValid){
+                var result = await accountService.Login(loginRequest);
+                if (result != null)
+                {
+                    var userProfider =await authStateProvider.GetAuthenticationStateAsync();
+                    if (userProfider.User.IsInRole("Admin"))
+                    {
+                        navigationManager.NavigateTo("/admin");
+                    }
+
+                    if (userProfider.User.IsInRole("Instansi"))
+                    {
+                        navigationManager.NavigateTo("/instansi");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toasService.Add(ex.Message, MudBlazor.Severity.Error);
+        }
+    }
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!System.Text.RegularExpressions.Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+
+}

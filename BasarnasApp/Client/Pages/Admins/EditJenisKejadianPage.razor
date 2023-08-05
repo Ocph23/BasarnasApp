@@ -1,0 +1,88 @@
+     
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudForm Model="@model" @ref="@form" OnVal Validation="@(validator.ValidateValue)" ValidationDelay="0">
+                <MudCardContent>
+                        <MudTextField @bind-Value="model.Name"                              
+                                    For="@(() => model.Name)"
+                                    Immediate="true"
+                                    Label="Nama" />
+
+                        <MudTextField Lines="5" @bind-Value="model.Description"
+                                    For="@(() => model.Description)"
+                                    Immediate="true"
+                                    Label="Keterangan" />
+
+                        <MudField Label="Instansi" For="@(()=>model.Instansis)"  Immediate="true">
+                            <MudChipSet @bind-SelectedChips="selected" MultiSelection="true" Filter="true">
+                                 @foreach(var item in datas){
+                                      <MudChip Text="@item.Item1" Variant="Variant.Filled" Color="Color.Default" 
+                                            Default="@item.Item2"
+                                            SelectedColor="Color.Success"></MudChip>
+                                 }   
+                            </MudChipSet>
+                        </MudField>
+
+                </MudCardContent>
+            </MudForm>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" OnClick="Submit" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@inject IInstansiService instansiService
+@inject ISnackbar snackbar
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+   
+    [Parameter]
+    public  JenisKejadianRequest? model {get;set;}
+
+    MudForm? form;
+    
+    JenisKejadianValidator validator= new JenisKejadianValidator();
+
+    IEnumerable<InstansiRequest>? dataInstansi;
+
+    MudChip[] selected;
+
+    ICollection<(string , bool)> datas = new List<(string, bool)> ();
+
+
+    protected override async Task OnInitializedAsync()
+        {
+            dataInstansi = await instansiService.GetAsync();
+            foreach(var item in dataInstansi){
+                    var isDefault = false;
+
+                    if(model.Id>0){
+                        var exists = model.Instansis.FirstOrDefault(x=>x.Id== item.Id);
+                        if(exists!=null){
+                            isDefault=true;
+                        }
+                    }
+                    datas.Add((item.Name, isDefault));
+                }
+        }
+        async void Submit() {
+          await form.Validate(); 
+            if(selected==null || selected.Count()<=0){
+                snackbar.Add("Anda Belum Memilih Instansi", MudBlazor.Severity.Error);
+                return;
+            }
+            model.Instansis.Clear();
+            foreach (var item in selected){
+                var instansi = dataInstansi!.FirstOrDefault(x=>x.Name == item.Text);   
+                model.Instansis.Add(instansi!);
+            }
+        if(form.IsValid){
+            
+            MudDialog.Close(DialogResult.Ok(model));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

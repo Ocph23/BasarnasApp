@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+
+@inject IJSRuntime jsRuntime
+<div class="page" style="background-image:url('/bg.jpg'); background-size:streach">
+    @Body
+</div>
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        return Task.CompletedTask;
+    }
+}

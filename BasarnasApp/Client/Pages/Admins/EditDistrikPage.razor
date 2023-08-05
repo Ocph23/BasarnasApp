@@ -1,0 +1,44 @@
+     
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudForm Model="@model" @ref="@form" OnVal Validation="@(validator.ValidateValue)" ValidationDelay="0">
+                <MudCardContent>
+                        <MudTextField @bind-Value="model.Name"                              
+                                    For="@(() => model.Name)"
+                                    Immediate="true"
+                                    Label="Nama" />
+
+                        <MudTextField Lines="5" @bind-Value="model.Description"
+                                    For="@(() => model.Description)"
+                                    Immediate="true"
+                                    Label="Keterangan" />
+                </MudCardContent>
+            </MudForm>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Submit" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+   
+    [Parameter]
+    public  DistrictRequest model {get;set;}
+
+    MudForm form;
+    DistrikValidator validator= new DistrikValidator();
+
+    void Submit() {
+
+        if(form.IsValid){
+            MudDialog.Close(DialogResult.Ok(model));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

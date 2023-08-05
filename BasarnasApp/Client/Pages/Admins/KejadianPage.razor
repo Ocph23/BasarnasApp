@@ -1,0 +1,91 @@
+﻿@layout AdminLayout
+@page "/admin/kejadian"
+
+
+
+@inject IJSRuntime js
+@inject IKejadianService kejadianService
+
+
+
+<MudPaper style="margin:20px; padding: 30px;">
+    <div style="display: flex;">
+        <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Kejadian</MudText>
+        <MudSpacer />
+        <div>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+        </div>
+    </div>
+
+    <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
+        <Columns>
+            <TemplateColumn Title="Nomor">
+                <CellTemplate>
+                    @(context.Item.index + 1)
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Data.Kode" Title="Tanggal" />
+            <PropertyColumn Property="x => x.Data.Tanggal" Title="Tanggal" />
+            <PropertyColumn Property="x => x.Data.JenisKejadianName" Title="Kejadian" />
+            <PropertyColumn Property="x => x.Data.DistrictName" Title="Distrik" />
+            <PropertyColumn Property="x => x.Data.Status" Title="Status" />
+            <TemplateColumn Context="item" style="width:70px">
+                <CellTemplate>
+                    <MudIconButton OnClick="@(()=>UbahStatus(item.Item.Data))" Icon="@Icons.Material.Filled.ChangeCircle" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
+                    @if (!string.IsNullOrEmpty(item.Item.Data.LongLat))
+                    {
+                        <MudIconButton OnClick="@(()=>ShowMap(item.Item.Data))" Icon="@Icons.Material.Filled.Map" Variant="Variant.Filled" Color="Color.Info"></MudIconButton>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>
+
+@inject IDialogService Dialog
+
+@code {
+
+    public string Height = "100vh";
+    ICollection<KejadianRequest> datas = new List<KejadianRequest>();
+    protected override async void OnInitialized()
+    {
+        var result  = await kejadianService.GetAsync();
+        foreach (var item in result)
+        {
+            datas.Add(item);
+        }
+
+        StateHasChanged();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+            StateHasChanged();
+      //  await js.InvokeVoidAsync("initMap");
+    }
+
+    async Task ShowMap(KejadianRequest kejadian)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true };
+        var parameters = new DialogParameters<MapPage> { { x => x.model, kejadian.LongLat } };
+        var dlg = await Dialog.Show<MapPage>("Lokasi Kejadian", parameters, options).Result;
+    }
+    async Task UbahStatus(KejadianRequest kejadian)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditStatusPage> { { x => x.model, kejadian.Status } };
+        var dlg = await Dialog.Show<EditStatusPage>("Ubah Status Laporan", parameters, options).Result;
+
+        if(!dlg.Cancelled){
+            var model = (StatusLaporan)dlg.Data;
+            var updatedStatus = await kejadianService.ChangeStatus(kejadian.Id,model );
+            if(updatedStatus){
+                kejadian.Status = model;
+            }
+
+        }       
+
+
+    }
+}

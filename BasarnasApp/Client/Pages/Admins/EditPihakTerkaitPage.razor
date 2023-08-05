@@ -1,0 +1,93 @@
+@inject IDistrictService districtService
+@inject IInstansiService instansiService
+
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudForm Model="@model" @ref="@form" OnVal Validation="@(validator.ValidateValue)" ValidationDelay="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="model.Name"
+                                  For="@(() => model.Name)"
+                                  Immediate="true"
+                                  Label="Nama" />
+
+                    @if (model.Id <= 0)
+                    {
+                        <MudTextField @bind-Value="model.Email"
+                                      For="@(() => model.Email)"
+                                      Immediate="true"
+                                      Label="Email" />
+                    }
+
+                    <MudSelect T="InstansiRequest" Label="Instansi"
+                               For="@(()=>model.Instansi)"
+                    @bind-Value="model.Instansi"
+                               ToStringFunc="@((x)=>x.Name)" 
+                               AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var item in dataInstansi)
+                        {
+                            <MudSelectItem Value="@item" />
+                        }
+                    </MudSelect>
+
+                    <MudSelect T="DistrictRequest" Label="District"
+                    @bind-Value="model.District"
+                               For="@(()=>model.District)"
+                               ToStringFunc="@((x)=>x.Name)"  AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var item in dataDistrict)
+                        {
+                            <MudSelectItem Value="@item" />
+
+                        }
+                    </MudSelect>
+
+
+                    <MudTextField Lines="5" @bind-Value="model.Description"
+                                  For="@(() => model.Description)"
+                                  Immediate="true"
+                                  Label="Keterangan" />
+                </MudCardContent>
+            </MudForm>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Submit" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public PihakTerkaitRequest model { get; set; }
+
+    MudForm form;
+    PihakTerkaitValidator validator = new PihakTerkaitValidator();
+
+    IEnumerable<InstansiRequest> dataInstansi;
+    IEnumerable<DistrictRequest> dataDistrict;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        dataDistrict = await districtService.GetAsync();
+        dataInstansi = await instansiService.GetAsync();
+    }
+
+
+    void Submit()
+    {
+
+        form.Validate();
+        if (form.IsValid)
+        {
+
+
+            MudDialog.Close(DialogResult.Ok(model));
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasarnasMobilaApp.Pages.RegisterPage"
+             BackgroundColor="WhiteSmoke"
+             Padding="40"
+             Title="RegisterPage">
+    <Grid RowDefinitions="auto, *">
+        <StackLayout VerticalOptions="Center">
+            <Image VerticalOptions="Center" WidthRequest="50" Source="basarnas.png"></Image>
+            <Label Margin="0,20" Text="Register" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
+        </StackLayout>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Grid.Row="1" VerticalOptions="Center">
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Nama"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Entry Grid.Column="1" Text="{Binding Model.Name}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Email/ User Name"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Entry Grid.Column="1" Text="{Binding Model.Email}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="No Hp"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Entry Grid.Column="1" Text="{Binding Model.PhoneNumber}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Alamat"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Entry Grid.Column="1" Text="{Binding Model.Address}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf084;"></Label>
+                            <Entry IsPassword="True" Grid.Column="1" Text="{Binding Model.Password}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Confirm Password"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf084;"></Label>
+                            <Entry IsPassword="True" Grid.Column="1" Text="{Binding Model.ConfirmPassoword}"></Entry>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Button Margin="0,20" Text="Register" Command="{Binding RegisterCommand}"></Button>
+                <HorizontalStackLayout>
+                    <Label Text="Punya Akun ? "></Label>
+                    <Label Text="Login" TextColor="OrangeRed">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GotoLoginCommand}"></TapGestureRecognizer>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

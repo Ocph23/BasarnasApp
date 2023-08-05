@@ -1,0 +1,78 @@
+﻿@layout AdminLayout
+@page "/admin"
+
+@inject IDashboardService dashboardService
+
+<MudPaper Style="margin:30px; padding:20px">
+    <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Dashboard</MudText>
+    <MudGrid>
+        <MudItem xs="12" sm="12" md="12">
+            <MudAlert Severity="MudBlazor.Severity.Success">Welcome To Emergency System</MudAlert>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.Build" Color="Color.Primary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Instansi</MudText>
+                    <MudText Typo="Typo.h5">@model.Instansi</MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Secondary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Distrik</MudText>
+                    <MudText Typo="Typo.h5">@model.District </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.PrivateConnectivity" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Pihak Terkait</MudText>
+                    <MudText Typo="Typo.h5">@model.PihakTerkait </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Warning" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Pengguna</MudText>
+                    <MudText Typo="Typo.h5">@model.Pelapor</MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="8">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.Report" Color="Color.Info" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Laporan</MudText>
+                    <MudText Typo="Typo.h5">@model.Laporan </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+
+        
+    </MudGrid>
+</MudPaper>
+
+@code {
+    DashboardModel model = new DashboardModel();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var data = await dashboardService.GetAsync();
+        if (data is not null)
+        {
+            model = data; 
+        }
+    }
+
+}

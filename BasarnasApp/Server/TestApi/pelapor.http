@@ -1,0 +1,62 @@
+
+POST https://localhost:7208/api/account/login HTTP/1.1
+content-type: application/json
+
+{
+    "userName": "ocph23@gmail.com",
+    "password": "Password@123"
+}
+
+###
+
+
+Get https://localhost:7208/api/kejadian HTTP/1.1
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEwODhkMzg4LTIwZWQtNGE3Yi04OWNhLWRhOWNmNjQwNDFhZiIsIm5hbWUiOiJvY3BoMjNAZ21haWwuY29tIiwic3ViIjoib2NwaDIzQGdtYWlsLmNvbSIsImVtYWlsIjoib2NwaDIzQGdtYWlsLmNvbSIsImp0aSI6IjQ2ZWY0NjBmLTBiYTMtNDdlMC1iZWQyLTdmZWQ1ODI1ODkzZCIsInJvbGUiOiJQZWxhcG9yIiwibmJmIjoxNjkxMTE1NjQwLCJleHAiOjE2OTE3MjA0NDAsImlhdCI6MTY5MTExNTY0MCwiaXNzIjoiaHR0cHM6Ly9iYXNhcm5hcy5hcHNwYXB1YS5jb20vIiwiYXVkIjoiaHR0cHM6Ly9iYXNhcm5hcy5hcHNwYXB1YS5jb20vIn0.g1nEL7Ib9fAvhhwfl4HcqKOlgUDhYhFjYd9gmNQMCYNoKcOUTT5u34wPSFByWZUmu2Xg6AA4-4qt_1dSJcA-2Q
+
+
+######
+
+//create laporan
+
+POST https://localhost:7208/api/kejadian HTTP/1.1
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEwODhkMzg4LTIwZWQtNGE3Yi04OWNhLWRhOWNmNjQwNDFhZiIsIm5hbWUiOiJvY3BoMjNAZ21haWwuY29tIiwic3ViIjoib2NwaDIzQGdtYWlsLmNvbSIsImVtYWlsIjoib2NwaDIzQGdtYWlsLmNvbSIsImp0aSI6IjQ2ZWY0NjBmLTBiYTMtNDdlMC1iZWQyLTdmZWQ1ODI1ODkzZCIsInJvbGUiOiJQZWxhcG9yIiwibmJmIjoxNjkxMTE1NjQwLCJleHAiOjE2OTE3MjA0NDAsImlhdCI6MTY5MTExNTY0MCwiaXNzIjoiaHR0cHM6Ly9iYXNhcm5hcy5hcHNwYXB1YS5jb20vIiwiYXVkIjoiaHR0cHM6Ly9iYXNhcm5hcy5hcHNwYXB1YS5jb20vIn0.g1nEL7Ib9fAvhhwfl4HcqKOlgUDhYhFjYd9gmNQMCYNoKcOUTT5u34wPSFByWZUmu2Xg6AA4-4qt_1dSJcA-2Q
+
+{
+    "Id":0,
+    "JenisKejadianId":1,
+    "DistrictId":1,
+    "LongLat":"-2.611318, 140.678708",
+    "Photo":"",
+    "Tanggal":"2023-07-01T13:00:00",
+    "PelaporId":1,
+    "Status":0
+}
+
+######
+
+POST https://localhost:7208/api/pelapor HTTP/1.1
+content-type: application/json
+
+{
+    "name": "ocph23",
+    "email": "ocph23@gmail.com",
+    "password": "Password@123",
+    "address": "jln. A"
+}
+
+
+####
+
+Get https://localhost:7208/pelapor HTTP/1.1
+content-type: application/json
+
+{
+    "name": "ocph23",
+    "email": "ocph23@gmail.com",
+    "password": "Password@123",
+    "address": "jln. A"
+}
+
+

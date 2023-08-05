@@ -1,0 +1,90 @@
+@layout AdminLayout
+@page "/admin/pihakterkait"
+
+@inject IPihakTerkaitService pihakTerkaitService
+@inject NavigationManager Navigation
+@inject IDialogService Dialog
+
+<MudPaper style="margin:20px; padding: 30px;">
+    <div style="display: flex;">
+        <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Pihak Terkait</MudText>
+        <MudSpacer />
+        <div>
+            <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add">Tambah</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+        </div>
+    </div>
+
+    <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
+        <Columns>
+            <TemplateColumn Title="Nomor">
+                <CellTemplate>
+                    @(context.Item.index + 1)
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Data.Instansi.Name" Title="Instansi" />
+            <PropertyColumn Property="x => x.Data.District.Name" Title="Distrik"/>
+            <PropertyColumn Property="x => x.Data.Name"  Title="Pihak Terkait"/>
+            <PropertyColumn Property="x => x.Data.Description"  Title="Keterangan"/>
+            <TemplateColumn Context="item" style="width:70px">
+                <CellTemplate>
+                    <MudIconButton OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
+                    <MudIconButton OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"></MudIconButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>
+
+@code {
+
+    ICollection<PihakTerkaitRequest> datas = new List<PihakTerkaitRequest>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await pihakTerkaitService.GetAsync();
+        datas = result.ToList();
+    }
+
+    async Task Add()
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditPihakTerkaitPage> { { x => x.model, new PihakTerkaitRequest() } };
+        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Tambah Distrik", parameters, options).Result;
+        if (!dlg.Cancelled)
+        {
+            var result = await pihakTerkaitService.PostAsync(dlg.Data as PihakTerkaitRequest);
+            datas.Add(result);
+        }
+
+    }
+
+    async Task Edit(PihakTerkaitRequest model)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditPihakTerkaitPage> { { x => x.model, model } };
+        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Edit Distrik", parameters, options).Result;
+        if (!dlg.Cancelled)
+        {
+            var district = dlg.Data as PihakTerkaitRequest;
+            var result = await pihakTerkaitService.PutAsync(district.Id, district);
+
+        }
+
+    }
+
+
+    async Task Delete(PihakTerkaitRequest model)
+    {
+        bool? result = await Dialog.ShowMessageBox(
+                    "Warning", "Yakin Hapus Data ?", yesText: "Delete!", cancelText: "Cancel");
+        if (result is true)
+        {
+            var deleted = await pihakTerkaitService.DeleteAsync(model.Id);
+            if (deleted)
+            {
+                datas.Remove(model);
+            }
+        }
+    }
+}

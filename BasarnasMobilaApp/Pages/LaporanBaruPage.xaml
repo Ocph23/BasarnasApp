@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasarnasMobilaApp.Pages.LaporanBaruPage"
+                  BackgroundColor="WhiteSmoke"
+             Padding="40" Title="Laporan Baru">
+    <Grid RowDefinitions="auto, *">
+        <StackLayout VerticalOptions="Center">
+            <Image VerticalOptions="Center" WidthRequest="50" Source="basarnas.png"></Image>
+            <Label Margin="0,20" Text="Register" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
+        </StackLayout>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Grid.Row="1" VerticalOptions="Center">
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Tempat Kejadian"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Picker SelectedItem="{Binding Model.District}" ItemsSource="{Binding Districts}" ItemDisplayBinding="Name"></Picker>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Jenis Kejadian"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Picker SelectedItem="{Binding Model.JenisKejadian}" ItemsSource="{Binding JenisKejadians}" ItemDisplayBinding="Name"></Picker>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+               
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Keterangan"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Editor Grid.Column="1" Text="{Binding Model.Address}"></Editor>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="photo"></Label>
+                        <Grid ColumnDefinitions="auto,*" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                            <Image ></Image>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <Button Margin="0,20" Text="Simpan" Command="{Binding UpdateProfileCommand}"></Button>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

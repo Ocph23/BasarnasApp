@@ -1,0 +1,89 @@
+@layout AdminLayout
+@page "/admin/instansi"
+
+@inject IInstansiService instansiService
+@inject NavigationManager Navigation
+@inject IDialogService Dialog
+
+<MudPaper style="margin:20px; padding: 30px;">
+    <div style="display: flex;">
+        <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Instansi</MudText>
+        <MudSpacer />
+        <div>
+            <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add">Tambah</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+        </div>
+    </div>
+
+    <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
+        <Columns>
+            <TemplateColumn Title="Nomor">
+                <CellTemplate>
+                    @(context.Item.index + 1)
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Data.Name" Title="Nama Instansi"/>
+            <PropertyColumn Property="x => x.Data.Description" Title="Keterangan" />
+            <TemplateColumn Context="item"  Title="Logo">
+                <CellTemplate>
+                    <MudImage style="width:50px" Src="@($"/images/thumbs/{item.Item.Data.Thumb}")" />
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Context="item" style="width:50px">
+                <CellTemplate>
+                    <MudIconButton OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
+                    <MudIconButton OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"></MudIconButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>
+
+@code {
+
+    ICollection<InstansiRequest> datas = new List<InstansiRequest>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await instansiService.GetAsync();
+        datas = result.ToList();
+    }
+
+    async Task Add()
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditInstansiPage> { { x => x.model, new InstansiRequest() } };
+        var dlg = await Dialog.Show<EditInstansiPage>("Tambah Instansi", parameters, options).Result;
+        if (!dlg.Cancelled)
+        {
+            var result = await instansiService.PostAsync(dlg.Data as InstansiRequest);
+            datas.Add(result);
+        }
+    }
+
+    async Task Edit(InstansiRequest model)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditInstansiPage> { { x => x.model, model } };
+        var dlg = await Dialog.Show<EditInstansiPage>("Edit Instansi", parameters, options).Result;
+        if (!dlg.Cancelled)
+        {
+            var instansi = dlg.Data as InstansiRequest;
+            var result = await instansiService.PutAsync(instansi.Id, instansi);
+        }
+    }
+
+    async Task Delete(InstansiRequest model)
+    {
+        bool? result = await Dialog.ShowMessageBox(
+                    "Warning", "Yakin Hapus Data ?", yesText: "Delete!", cancelText: "Cancel");
+        if (result is true)
+        {
+            var deleted = await instansiService.DeleteAsync(model.Id);
+            if (deleted)
+            {
+                datas.Remove(model);
+            }
+        }
+    }
+}

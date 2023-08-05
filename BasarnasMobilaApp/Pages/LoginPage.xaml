@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BasarnasMobilaApp.Pages.LoginPage"
+             BackgroundColor="WhiteSmoke"
+             Padding="40" Title="LoginPage">
+    <Grid RowDefinitions="auto, *, auto">
+        <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+            <Image Margin="20" VerticalOptions="Center" WidthRequest="100" Source="basarnas.png"></Image>
+            <Label  FontSize="25" HorizontalOptions="Center" Text="Emergency System"></Label>
+            <Label FontSize="20" HorizontalOptions="Center" Text="Kota Jayapura"></Label>
+        </StackLayout>
+        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center">
+            <Label Margin="0,20" Text="Login" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
+            <Frame Style="{StaticResource inputFrame}" >
+                <StackLayout>
+                    <Label Style="{StaticResource inputLabel}" Text="User Name/Email"></Label>
+                    <Grid ColumnDefinitions="auto,*" >
+                        <Label  Style="{StaticResource Icon}" Text="&#xf2c0;"></Label>
+                        <Entry Grid.Column="1" Text="{Binding UserName}"></Entry>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+            <Frame Style="{StaticResource inputFrame}" >
+                <StackLayout>
+                    <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
+                    <Grid ColumnDefinitions="auto,*" >
+                        <Label  Style="{StaticResource Icon}" Text="&#xf084;"></Label>
+                        <Entry IsPassword="True" Grid.Column="1" Text="{Binding Password}"></Entry>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+            <Button Margin="0,20" Text="Login" Command="{Binding LoginCommand}"></Button>
+            <HorizontalStackLayout>
+                <Label Text="Belum Punya Akun ? "></Label>
+                <Label Text="Register" TextColor="OrangeRed">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GotoRegisterCommand}"></TapGestureRecognizer>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+        <Label Grid.Row="2" Text="@2023" VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

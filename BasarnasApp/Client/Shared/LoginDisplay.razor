@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using OcphApiAuth.Client;
+@inject NavigationManager Navigation
+@inject IAccountService accountService
+
+<AuthorizeView>
+    <Authorized>
+        <MudLink Href="authentication/profile">Hello, @context.User.Identity?.Name! </MudLink>
+        <MudButton OnClick="BeginLogOut">Log out</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudLink Href="authentication/login">Log in</MudLink>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    private void BeginLogOut()
+    {
+        accountService.Logout();
+    }
+}

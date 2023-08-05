@@ -1,0 +1,36 @@
+     
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudForm>
+                <MudCardContent>
+                    <MudSelect T="StatusLaporan" @bind-Value="model">
+                        @foreach(var item in  Enum.GetValues(typeof(StatusLaporan)).Cast<StatusLaporan>()){
+                            <MudSelectItem Value="@item" >@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudCardContent>
+            </MudForm>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Submit" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+   
+    [Parameter]
+    public  StatusLaporan model {get;set;}
+
+    MudForm form;
+
+    void Submit() {
+        MudDialog.Close(DialogResult.Ok(model));
+    }
+    void Cancel() => MudDialog.Cancel();
+}

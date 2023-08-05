@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.SignalR.Client;
+@inherits LayoutComponentBase
+@implements IAsyncDisposable
+
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Info">
+        <MudText style="margin-right:30px" Typo="Typo.h5" Class="ml-3">Emergency App</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <LoginDisplay />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <InstansiNavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager Navigation
+@inject IPihakTerkaitService pihakTerkaitService
+
+@inject IJSRuntime js
+
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private static HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/apphub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
+      {
+      await js.InvokeVoidAsync("OnKejadianFire",$"{user} - {message}");
+        StateHasChanged();
+      });
+
+        await hubConnection.StartAsync();
+
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated && authState.User.IsInRole("Instansi"))
+        {
+            Navigation.NavigateTo("/instansi");
+            var data = await pihakTerkaitService.GetProfile();
+        }
+        else
+        {
+            Navigation.NavigateTo("/account/login", true);
+        }
+    }
+
+    private async Task Send()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendMessage", "userInput", "messageInput");
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
