@@ -29,7 +29,7 @@
                         </Grid>
                     </StackLayout>
                 </Frame>
-               
+
                 <Frame Style="{StaticResource inputFrame}" HeightRequest="150" >
                     <StackLayout>
                         <Label Style="{StaticResource inputLabel}" Text="Keterangan"></Label>
@@ -49,19 +49,23 @@
                     </StackLayout>
                 </Frame>
 
-                <Frame Style="{StaticResource inputFrame}" >
-                    <StackLayout>
-                        <HorizontalStackLayout>
-                            <Label VerticalOptions="Center" Style="{StaticResource Icon}" Text="&#xf083;"></Label>
-                            <Label HorizontalOptions="Center"  Text="Photo"></Label>
-                        </HorizontalStackLayout>
-                        <Image Source="{Binding Photo}" HorizontalOptions="Fill">
-                            <Image.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding TakePhotoCommand }"></TapGestureRecognizer>
-                            </Image.GestureRecognizers>
-                        </Image>
-                    </StackLayout>
-                </Frame>
+                <Grid>
+                    <Frame Style="{StaticResource inputFrame}" >
+                        <StackLayout>
+                            <HorizontalStackLayout>
+                                <Label VerticalOptions="Center" Style="{StaticResource Icon}" Text="&#xf083;"></Label>
+                                <Label HorizontalOptions="Center"  Text="Photo"></Label>
+                            </HorizontalStackLayout>
+                            <Image Source="{Binding Photo}" HorizontalOptions="Fill">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding TakePhotoCommand }"></TapGestureRecognizer>
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </StackLayout>
+                    </Frame>
+                    <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" WidthRequest="50"></ActivityIndicator>
+                </Grid>
+
                 <Button Margin="0,20" Text="Simpan" Command="{Binding SaveCommand}"></Button>
             </VerticalStackLayout>
         </ScrollView>

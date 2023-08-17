@@ -11,7 +11,9 @@ namespace BasarnasMobilaApp
 {
     public class Helper
     {
-        public static string Url => "https://5smglw7t-7208.asse.devtunnels.ms";
+        
+        public static string Url => "https://basarnas.apspapua.com";
+        //public static string Url => "https://5smglw7t-7208.asse.devtunnels.ms";
 
         public static async Task<byte[]> TakePhoto()
         {

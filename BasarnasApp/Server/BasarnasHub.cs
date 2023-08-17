@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Text.Json;
+using BasarnasApp.Server.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BasarnasApp.Server
 {
@@ -9,7 +11,7 @@ namespace BasarnasApp.Server
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
-
+     
 
         public override Task OnConnectedAsync()
         {

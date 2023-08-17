@@ -1,10 +1,30 @@
-﻿
+﻿@using Blazored.LocalStorage;
+
 <div style="display:flex; justify-content:center">
-    <MudImage Style="width:25%; margin:20px" Src="basarnas.png"></MudImage>
+
+        <MudImage Style="width:25%; margin:20px" Src="@logo"></MudImage>
+
 </div>
 
 <MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/instansi" Match="NavLinkMatch.All">Dashboard</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.AccessAlarm" Href="/instansi/kejadian" Match="NavLinkMatch.Prefix">Kejadian</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.VerifiedUser" Href="/instansi/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.Info" Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
 </MudNavMenu>
+
+
+@inject ILocalStorageService localStorage
+@code{
+    public PihakTerkaitRequest profile { get; set; }
+    string logo="/basarnas.png";
+    protected override async Task OnInitializedAsync()
+    {
+        profile = await localStorage.GetItemAsync<PihakTerkaitRequest>("profile");
+        @if (profile != null && profile.Instansi != null && !string.IsNullOrEmpty(profile.Instansi.Logo))
+        {
+            logo = $"/images/logo/{profile.Instansi.Logo}";
+        }
+    }
+
+}

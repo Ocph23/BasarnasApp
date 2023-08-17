@@ -24,6 +24,7 @@ builder.Services.AddMudServices();
 builder.Services.AddOcphAuthClient();
 
 
+builder.Services.AddSingleton<SignalRService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IInstansiService, InstansiService>();
 builder.Services.AddScoped<IJenisKejadianService, JenisKejadianService>();

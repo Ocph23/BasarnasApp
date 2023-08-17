@@ -1,102 +1,88 @@
 ﻿@layout InstansiLayout
 @page "/instansi"
+@using Blazored.LocalStorage;
+@inject IDashboardService dashboardService
 
 <MudPaper Style="margin:30px; padding:20px">
     <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Dashboard</MudText>
     <MudGrid>
+        <MudItem xs="12" sm="12" md="12">
+            <MudAlert Severity="MudBlazor.Severity.Success">
+                @if (profile != null)
+                {
+                    <h1>@profile.Instansi.Name</h1>
+                    <h1>@profile.Name</h1>
+                    <h1>Distrik @profile.District.Name</h1>
+                }
+            </MudAlert>
+        </MudItem>
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-                <MudIcon Icon="@Icons.Material.Filled.MapsUgc" Color="Color.Primary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.Build" Color="Color.Primary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
                 <div>
-                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Rayon</MudText>
-                    <MudText Typo="Typo.h5">10</MudText>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Instansi</MudText>
+                    <MudText Typo="Typo.h5">@model.Instansi</MudText>
                 </div>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-                <MudIcon Icon="@Icons.Material.Filled.MapsHomeWork" Color="Color.Secondary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Secondary" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
                 <div>
-                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Keluarga</MudText>
-                    <MudText Typo="Typo.h5">20 KK</MudText>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Distrik</MudText>
+                    <MudText Typo="Typo.h5">@model.District </MudText>
                 </div>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.PrivateConnectivity" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
                 <div>
-                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Jemaat</MudText>
-                    <MudText Typo="Typo.h5">30 orang</MudText>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Pihak Terkait</MudText>
+                    <MudText Typo="Typo.h5">@model.PihakTerkait </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Warning" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Pengguna</MudText>
+                    <MudText Typo="Typo.h5">@model.Pelapor</MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="8">
+            <MudPaper Elevation="25" Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                <MudIcon Icon="@Icons.Material.Filled.Report" Color="Color.Info" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                <div>
+                    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Jumlah Laporan</MudText>
+                    <MudText Typo="Typo.h5">@model.Laporan </MudText>
                 </div>
             </MudPaper>
         </MudItem>
 
 
 
-
-        <MudItem xs="12" sm="8">
-            <MudPaper Elevation="25" Class="pa-4" Style="height:300px;">
-                Charts comming soon ish...
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudPaper Elevation="25" Class="pa-4" Style="height:300px;">
-                Charts comming soon ish...
-            </MudPaper>
-        </MudItem>
-
-
-        <MudItem xs="12" sm="12" md="6">
-            <MudCard Elevation="25" Style="height:100%;">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Diakonia</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="px-0">
-                    <MudSimpleTable Elevation="0" Hover="true">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex flex-row">
-                                        <MudText Typo="Typo.subtitle2">Lansia</MudText>
-                                    </div>
-                                </td>
-                                <td style="width:auto; text-align:end"><MudText>40</MudText></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex flex-row">
-                                        <MudText Typo="Typo.subtitle2">Janda & Duda</MudText>
-                                    </div>
-                                </td>
-                                <td style="width:auto; text-align:end"><MudText>50</MudText></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex flex-row">
-                                        <MudText Typo="Typo.subtitle2">Yatim/Piatu</MudText>
-                                    </div>
-                                </td>
-                                <td style="width:auto; text-align:end"><MudText>0</MudText></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex flex-row">
-                                        <MudText Typo="Typo.subtitle2">Saldo Akhir Kas Diakonia</MudText>
-                                    </div>
-                                </td>
-                                <td style="width:auto; text-align:end"><MudText>Rp. .ToString("N2")</MudText></td>
-                            </tr>
-                        </tbody>
-                    </MudSimpleTable>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
     </MudGrid>
 </MudPaper>
 
+@inject ILocalStorageService localStorage
+
 @code {
+    DashboardModel model = new DashboardModel();
+
+    PihakTerkaitRequest profile;
+    protected override async Task OnInitializedAsync()
+    {
+       profile = await localStorage.GetItemAsync<PihakTerkaitRequest>("profile");
+        var data = await dashboardService.GetAsync();
+        if (data is not null)
+        {
+            model = data;
+        }
+    }
 
 }

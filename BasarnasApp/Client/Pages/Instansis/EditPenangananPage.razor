@@ -1,0 +1,97 @@
+@using Blazored.LocalStorage;
+
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudForm Model="@model" @ref="@form" OnVal Validation="@(validator.ValidateValue)" ValidationDelay="0">
+                <MudCardContent>
+                    <MudSelect Label="Status Penanganan" T="StatusPenganan" @bind-Value="penanganan.Status">
+                        @foreach (var item in Enum.GetValues(typeof(StatusPenganan)).Cast<StatusPenganan>())
+                        {
+                            <MudSelectItem Value="@item">@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudSelect Class="mt-2" Label="Penyebab" T="Penyebab" @bind-Value="penanganan.Penyebab">
+                        @foreach (var item in Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>())
+                        {
+                            <MudSelectItem Value="@item">@item.EnumToString()</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField Class="mt-2" Lines="5" @bind-Value="penanganan.Deskripsi"
+                                  Immediate="true"
+                                  Label="Deskripsi Penanganan" />
+                </MudCardContent>
+            </MudForm>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled=@(!canUpdate) OnClick="Submit" Color="Color.Primary">Update Penanganan</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@inject IKejadianService kejadianService
+@inject ILocalStorageService localService
+@inject ISnackbar snackbar
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public KejadianRequest model { get; set; }
+
+    MudForm form;
+    PenangananValidator validator = new PenangananValidator();
+
+
+    PenangananRequest penanganan = new PenangananRequest();
+
+    bool canUpdate = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var penanganans = await kejadianService.GetPenanganan(model.Id);
+        var profile = await localService.GetItemAsync<PihakTerkaitRequest>("profile");
+
+        if (profile == null)
+            return;
+
+
+        var data = penanganans.SingleOrDefault(x => x.Instansi.Id == profile.Instansi.Id);
+        if (data != null && data.PihakTerkait != null && data.PihakTerkait.Id != profile.Id)
+            return;
+        penanganan = data;
+        penanganan.PihakTerkait = profile;
+        canUpdate = true;
+    }
+
+
+    async void Submit()
+    {
+
+        if (form.IsValid)
+        {
+
+            var updated = await kejadianService.UpdatePenanganan(penanganan);
+
+            if (updated)
+            {
+                snackbar.Add("Berhasil ubah penanganan", MudBlazor.Severity.Success);
+                model.Status = penanganan.Status switch
+                {
+                    StatusPenganan.Ditangani => StatusLaporan.Ditangani,
+                    StatusPenganan.Batal => StatusLaporan.Batal, 
+                    StatusPenganan.Selesai => StatusLaporan.Selesai,
+                    _ => StatusLaporan.Menunggu
+                };
+                MudDialog.Close(DialogResult.Ok(model));
+            }
+            else
+            {
+                snackbar.Add("Gagal ubah penanganan", MudBlazor.Severity.Error);
+            }
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

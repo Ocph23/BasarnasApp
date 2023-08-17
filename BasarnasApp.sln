@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasarnasApp.Client", "Basar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasarnasApp.Shared", "BasarnasApp\Shared\BasarnasApp.Shared.csproj", "{DE493998-3415-49AC-B0BC-708DBEA955B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasarnasMobilaApp", "BasarnasMobilaApp\BasarnasMobilaApp.csproj", "{6921C3A0-C588-4FFA-B9E5-29EBD630CBF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasarnasMobilaApp", "BasarnasMobilaApp\BasarnasMobilaApp.csproj", "{6921C3A0-C588-4FFA-B9E5-29EBD630CBF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,6 +6,7 @@
                   BackgroundColor="WhiteSmoke"
              Shell.NavBarIsVisible="False"
              Padding="20"
+             x:Name="page"
              Title="LaporanPage">
     <ContentPage.Resources>
         <converter:StatusColorConverter x:Key="statusColorConverer"></converter:StatusColorConverter>
@@ -15,7 +16,7 @@
             <Label Margin="0,20" Text="Laporan" FontSize="Large"></Label>
         </StackLayout>
         <RefreshView Grid.Row="1" IsRefreshing="{Binding IsBusy}" Command="{Binding LoadCommand}">
-            <CollectionView  ItemsSource="{Binding Kejadians}" >
+            <CollectionView EmptyView="Belum Ada Data !"  ItemsSource="{Binding Kejadians}" >
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout Margin="0,3">
@@ -28,16 +29,42 @@
                                             </Frame>
                                             <Label FontSize="Small" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Tanggal}"></Label>
                                         </FlexLayout>
-                                        <StackLayout Grid.Row="1">
-                                            <StackLayout>
-                                                <Label FontSize="Micro" Text="Tempat Kejadian"></Label>
-                                                <Label  Text="{Binding DistrictName}"></Label>
+                                        <Grid HeightRequest="150" Grid.Row="1" ColumnDefinitions="*,auto">
+                                            <StackLayout >
+                                                <StackLayout>
+                                                    <HorizontalStackLayout>
+                                                        <Label FontSize="Micro" Style="{StaticResource Icon}" Text="&#xf1ad;"></Label>
+                                                        <Label FontSize="Micro" Text="Tempat Kejadian"></Label>
+                                                    </HorizontalStackLayout>
+                                                    <Label  Text="{Binding DistrictName}"></Label>
+                                                </StackLayout>
+                                                <StackLayout Margin="0,10">
+                                                    <HorizontalStackLayout>
+                                                        <Label FontSize="Micro" Style="{StaticResource Icon}" Text="&#xf0e7;"></Label>
+                                                        <Label FontSize="Micro" Text="Jenis Kejadian"></Label>
+                                                    </HorizontalStackLayout>
+                                                    <Label  Text="{Binding JenisKejadianName}"></Label>
+                                                </StackLayout>
+                                                <StackLayout Margin="0,10">
+                                                    <StackLayout.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.MapLinkCommand, Source={Reference page}}" 
+                                                                              CommandParameter="{Binding .}"></TapGestureRecognizer>
+                                                    </StackLayout.GestureRecognizers>
+                                                    <HorizontalStackLayout>
+                                                        <Label FontSize="Micro" Style="{StaticResource Icon}" Text="&#xf041;"></Label>
+                                                        <Label FontSize="Micro" Text="Lokasi"></Label>
+                                                    </HorizontalStackLayout>
+                                                    <Label  Text="{Binding LongLat}"></Label>
+                                                </StackLayout>
                                             </StackLayout>
-                                            <StackLayout Margin="0,10">
-                                                <Label FontSize="Micro" Text="Jenis Kejadian"></Label>
-                                                <Label  Text="{Binding JenisKejadianName}"></Label>
-                                            </StackLayout>
-                                        </StackLayout>
+                                            <Label VerticalOptions="Start" TextColor="Goldenrod" FontSize="40" Grid.Column="1" Style="{StaticResource Icon}" Text="&#xf030;">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        CommandParameter="{Binding .}"
+                                                        Command="{Binding Path=BindingContext.ShowPhotoCommand, Source={Reference page}}"></TapGestureRecognizer>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Grid>
                                     </Grid>
                                 </Frame>
                             </Frame>

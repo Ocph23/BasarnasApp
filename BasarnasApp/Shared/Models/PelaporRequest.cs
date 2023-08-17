@@ -20,6 +20,5 @@ namespace BasarnasApp.Shared.Models
 		public string? Password { get; set; }
 		public string? ConfirmPassoword { get; set; }
 		public byte[]? PhotoData { get; set; }
-        public byte[]? DataPhoto { get; set; }
     }
 }

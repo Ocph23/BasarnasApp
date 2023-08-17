@@ -1,0 +1,22 @@
+﻿
+<MudDialog>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="@(()=> MudDialog.Close())">Close</MudButton>
+    </DialogActions>
+    <DialogContent>
+        <MudCard>
+            <div style="height:100%; width:100%; ">
+                <img style="width:100%; height:100%" src="@model" />
+            </div>
+        </MudCard>
+    </DialogContent>
+  
+</MudDialog>
+@inject IJSRuntime js
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string model { get; set; } = "basarnas.png";
+
+}

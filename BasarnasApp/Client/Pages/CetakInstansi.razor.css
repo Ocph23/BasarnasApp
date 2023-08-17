@@ -1,0 +1,9 @@
+﻿.table-cetak {
+    border-collapse: collapse !important;
+    width:100%;
+}
+
+tr, td, th {
+    border: 1px solid gray;
+    padding:2px;
+}

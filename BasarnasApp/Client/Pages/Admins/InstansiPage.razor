@@ -4,14 +4,16 @@
 @inject IInstansiService instansiService
 @inject NavigationManager Navigation
 @inject IDialogService Dialog
+@inject IJSRuntime js
 
-<MudPaper style="margin:20px; padding: 30px;">
+
+<MudPaper Class="noprint" style="margin:20px; padding: 30px;">
     <div style="display: flex;">
         <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Instansi</MudText>
         <MudSpacer />
         <div>
             <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add">Tambah</MudButton>
-            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+            <MudButton OnClick="@(async()=> await js.InvokeVoidAsync("window.print"))" Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
         </div>
     </div>
 
@@ -22,23 +24,29 @@
                     @(context.Item.index + 1)
                 </CellTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.Data.Name" Title="Nama Instansi"/>
+            <PropertyColumn Property="x => x.Data.Name" Title="Nama Instansi" />
             <PropertyColumn Property="x => x.Data.Description" Title="Keterangan" />
-            <TemplateColumn Context="item"  Title="Logo">
+            <TemplateColumn Context="item" Title="Logo">
                 <CellTemplate>
-                    <MudImage style="width:50px" Src="@($"/images/thumbs/{item.Item.Data.Thumb}")" />
+                    <MudImage style="width:50px" Src="@($"/images/logo/{item.Item.Data.Logo}")" />
                 </CellTemplate>
             </TemplateColumn>
             <TemplateColumn Context="item" style="width:50px">
                 <CellTemplate>
-                    <MudIconButton OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
-                    <MudIconButton OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"></MudIconButton>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning">Edit</MudMenuItem>
+                        <MudMenuItem OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error">Delete</MudMenuItem>
+                    </MudMenu>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
     </MudDataGrid>
 </MudPaper>
 
+<div class="justprint">
+    <CetakInstansi Datas="datas"></CetakInstansi>
+
+</div>
 @code {
 
     ICollection<InstansiRequest> datas = new List<InstansiRequest>();
@@ -53,8 +61,8 @@
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditInstansiPage> { { x => x.model, new InstansiRequest() } };
-        var dlg = await Dialog.Show<EditInstansiPage>("Tambah Instansi", parameters, options).Result;
-        if (!dlg.Cancelled)
+        DialogResult dlg = await Dialog.Show<EditInstansiPage>("Tambah Instansi", parameters, options).Result;
+        if (!dlg.Canceled)
         {
             var result = await instansiService.PostAsync(dlg.Data as InstansiRequest);
             datas.Add(result);
@@ -65,10 +73,11 @@
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditInstansiPage> { { x => x.model, model } };
-        var dlg = await Dialog.Show<EditInstansiPage>("Edit Instansi", parameters, options).Result;
-        if (!dlg.Cancelled)
+        DialogResult dlg = await Dialog.Show<EditInstansiPage>("Edit Instansi", parameters, options).Result;
+        if (!dlg.Canceled)
         {
             var instansi = dlg.Data as InstansiRequest;
+            ArgumentNullException.ThrowIfNull(instansi);
             var result = await instansiService.PutAsync(instansi.Id, instansi);
         }
     }

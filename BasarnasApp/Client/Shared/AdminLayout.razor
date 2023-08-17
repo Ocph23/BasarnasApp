@@ -35,22 +35,9 @@
         _drawerOpen = !_drawerOpen;
     }
 
-    private static HubConnection? hubConnection;
-
     protected override async Task OnInitializedAsync()
     {
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/apphub"))
-            .Build();
-
-        hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
-      {
-          await js.InvokeVoidAsync("OnKejadianFire", $"{user} - {message}");
-          StateHasChanged();
-      });
-
-        await hubConnection.StartAsync();
 
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         if (authState.User.Identity.IsAuthenticated && authState.User.IsInRole("Admin"))
@@ -63,22 +50,4 @@
         }
     }
 
-    private async Task Send()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("SendMessage", "userInput", "messageInput");
-        }
-    }
-
-    public bool IsConnected =>
-        hubConnection?.State == HubConnectionState.Connected;
-
-    public async ValueTask DisposeAsync()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.DisposeAsync();
-        }
-    }
 }

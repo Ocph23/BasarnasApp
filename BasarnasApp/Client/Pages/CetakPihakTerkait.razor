@@ -1,0 +1,39 @@
+﻿<div style="width:100%; margin-bottom:50px; display:flex;justify-content:center;flex-direction:column; align-items:center">
+    <h4>LAPORAN DATA PIHAK TERKAIT</h4>
+  
+</div>
+<table class="table-cetak">
+    <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Instansi</th>
+        <th>Distrik</th>
+    </tr>
+    @if (Datas != null)
+    {
+        @foreach (var item in @Datas.Select((x, i) => new { Data = x, index = i }))
+        {
+            <tr>
+
+                <td>@(item.index + 1)</td>
+                <td>@item.Data.Name</td>
+                <td>@item.Data.Instansi.Name</td>
+                <td>@item.Data.District.Name</td>
+            </tr>
+        }
+    }
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable<PihakTerkaitRequest> Datas { get; set; }
+
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+  
+}
+
+

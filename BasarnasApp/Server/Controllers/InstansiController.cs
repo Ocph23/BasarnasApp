@@ -83,7 +83,7 @@ namespace BasarnasApp.Server.Controllers
                 var instansi = new Instansi { Id = request.Id, Name = request.Name,
                          Description = request.Description };
                 
-                if(request.DataLogo.Length >0){
+                if(request.DataLogo!=null &&  request.DataLogo.Length >0){
                    var logo  = await Helper.CreateLogo(request.DataLogo, request.Logo);
                    instansi.Logo = logo.File ;
                    instansi.Thumb = logo.Thumb ;

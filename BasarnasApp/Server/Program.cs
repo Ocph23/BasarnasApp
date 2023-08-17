@@ -3,22 +3,28 @@ using BasarnasApp.Server.Data;
 using BasarnasApp.Server.Models;
 using BasarnasApp.Server.Services;
 using BasarnasApp.Server.Services.ServiceContracts;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using OcphApiAuth;
 using OcphAspCoreApiAuth.Server;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 var connectionString =
     builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
-        options.UseNpgsql(connectionString));
-        //options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.UseKestrel(serverOptions =>
+    {
+        serverOptions.ListenLocalhost(5020);
+    });
+  
+}
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+//options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

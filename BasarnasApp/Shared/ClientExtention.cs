@@ -1,5 +1,7 @@
 
+using BasarnasApp.Shared.Models;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 public static class ClientExtention
 {
@@ -30,6 +32,11 @@ public static class ClientExtention
         {
             return "Maaf terjadi kesalahan, coba ulangi lagi.";
         }
+    }
+
+
+    public static string EnumToString(this Penyebab model) {
+       return Regex.Replace(model.ToString(), @"(?<=[a-z])([A-Z])", @" $1");
     }
 
    

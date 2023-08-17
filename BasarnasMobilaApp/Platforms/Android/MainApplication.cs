@@ -47,7 +47,7 @@ namespace BasarnasMobilaApp
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-#pragma warning disable CA1416
+                #pragma warning disable CA1416
                 var serviceChannel =
                     new NotificationChannel(ChannelId,
                         "Background Service Channel",
@@ -58,7 +58,7 @@ namespace BasarnasMobilaApp
                 {
                     manager.CreateNotificationChannel(serviceChannel);
                 }
-#pragma warning restore CA1416
+            #pragma warning restore CA1416
             }
         }
 

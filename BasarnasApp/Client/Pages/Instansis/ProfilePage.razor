@@ -1,0 +1,104 @@
+﻿@layout InstansiLayout
+@page "/instansi/profile"
+@using Blazored.LocalStorage;
+
+@inject IJSRuntime js
+@inject IKejadianService kejadianService
+@inject SignalRService signalr
+
+
+<MudGrid Style="padding:20px">
+    <MudItem xs="12" md="6" xl="4" Style="padding:20px">
+        <MudCard style="padding:20px">
+
+            <div style="display: flex; margin:20px">
+                <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Profile Pengguna</MudText>
+            </div>
+            @if (model != null)
+            {
+                <MudForm Model="@model" @ref="@form" OnVal Validation="@(validator.ValidateValue)" ValidationDelay="0">
+                    <MudCardContent>
+                        <div style="display:flex; justify-content:center">
+                            <img style="width:10%; margin:30px" src="@($"/images/logo/{model.Instansi.Logo}")" />
+                        </div>
+                        <MudTextField ReadOnly=true @bind-Value="model.Name"
+                                      For="@(() => model.Name)"
+                                      Immediate="true"
+                                      Label="Nama Pihak Terkait" />
+
+                        <MudTextField ReadOnly=true @bind-Value="model.Instansi.Name"
+                                      Immediate="true"
+                                      Label="Instansi" />
+
+                        <MudTextField ReadOnly=true @bind-Value="model.District.Name"
+                                      Immediate="true"
+                                      Label="Distrik" />
+
+                        <MudTextField @bind-Value="model.ProfileName"
+                                      For="@(() => model.ProfileName)"
+                                      Immediate="true"
+                                      Label="Nama Petugas" />
+
+                        <MudTextField @bind-Value="model.ProfileJabatan"
+                                      For="@(() => model.ProfileJabatan)"
+                                      Immediate="true"
+                                      Label="Jabatan" />
+
+                        <MudTextField Lines="5" @bind-Value="model.ProfileAddress"
+                                      For="@(() => model.ProfileAddress)"
+                                      Immediate="true"
+                                      Label="Alamat" />
+
+                    </MudCardContent>
+                </MudForm>
+                <MudCardActions Style="text-align:end">
+                    <MudButton OnClick="UbahUserPassword" Color="Color.Warning">Ubah Password</MudButton>
+                    <MudButton OnClick="Simpan" Color="Color.Primary">Simpan</MudButton>
+                </MudCardActions>
+            }
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+
+@inject ILocalStorageService localService;
+@inject IPihakTerkaitService pihakTerkaitService;
+@inject IInstansiService instansiService
+@inject NavigationManager Navigation
+@inject IDialogService Dialog
+@inject IJSRuntime js
+
+@code {
+    MudForm? form;
+    private PihakTerkaitRequest? model;
+    PihakTerkaitValidator validator = new PihakTerkaitValidator();
+    protected override async Task OnInitializedAsync()
+    {
+        model = await localService.GetItemAsync<PihakTerkaitRequest>("profile");
+    }
+
+
+    async Task Simpan()
+    {
+        var saved = await pihakTerkaitService.PutAsync(model.Id, model);
+        if (saved)
+        {
+            await localService.SetItemAsync<PihakTerkaitRequest>("profile", model);
+        }
+    }
+
+
+    async Task UbahUserPassword()
+    {
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditUserPassword> { { x => x.model, new ChangeUserPasswordRequest { UserId=model.UserId, Email = model.Email } } };
+        var dlg = await Dialog.Show<EditUserPassword>("Ubah Password", parameters, options).Result;
+        if (!dlg.Canceled)
+        {
+            var changeModel = dlg.Data as ChangeUserPasswordRequest;
+            ArgumentNullException.ThrowIfNull(changeModel, "Maaf Terjadi Kesalahan, Ulangi Lagi !");
+            var result = await pihakTerkaitService.ChangePassword(changeModel.UserId, changeModel);
+        }
+    }
+}

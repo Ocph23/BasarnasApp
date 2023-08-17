@@ -8,25 +8,26 @@ namespace BasarnasMobilaApp.Pages;
 
 public partial class RegisterPage : ContentPage
 {
-	public RegisterPage()
-	{
-		InitializeComponent();
+    public RegisterPage()
+    {
+        InitializeComponent();
         BindingContext = new RegisterViewModel();
-	}
+    }
 }
 
 public class RegisterViewModel : BaseViewModel
 {
 
-    public Pelapor Model { get; set; } = new Pelapor(); 
+    public Pelapor Model { get; set; } = new Pelapor();
 
     public RegisterViewModel()
     {
         validator = new RegisterValidator();
         GotoLoginCommand = new Command(GotoLoginAction);
         RegisterCommand = new Command(RegisterAction, RegiterValidate);
-        Model.PropertyChanged += (s, p) => { 
-                RegisterCommand = new Command(RegisterAction, RegiterValidate);
+        Model.PropertyChanged += (s, p) =>
+        {
+            RegisterCommand = new Command(RegisterAction, RegiterValidate);
         };
     }
 
@@ -34,6 +35,7 @@ public class RegisterViewModel : BaseViewModel
     {
         try
         {
+            IsBusy = true;
             var service = Helper.GetService<IPelaporService>();
             var result = await service.PostAsync(Model);
             if (result != null)
@@ -47,13 +49,19 @@ public class RegisterViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-           await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
         }
+        finally { IsBusy = false; }
     }
 
     private bool RegiterValidate(object arg)
     {
-       return validator.Validate(Model).IsValid;
+        var result = validator.Validate(Model);
+        if (result.Errors.Count > 0)
+        {
+            ErrorMessage = result.Errors.FirstOrDefault().ErrorMessage;
+        }
+        return result.IsValid;
     }
 
     private void GotoLoginAction(object obj)
@@ -88,7 +96,15 @@ public class RegisterViewModel : BaseViewModel
     public ICommand RegisterCommand
     {
         get { return registerCommand; }
-        set { SetProperty(ref registerCommand , value); }
+        set { SetProperty(ref registerCommand, value); }
+    }
+
+    private string errorMessage;
+
+    public string ErrorMessage
+    {
+        get { return errorMessage; }
+        set { SetProperty(ref errorMessage, value); }
     }
 
 
@@ -102,11 +118,11 @@ public class RegisterValidator : AbstractValidator<Pelapor>
         RuleFor((x) => x.Name).NotEmpty().WithMessage("nama Tidak Boleh Kosong!");
         RuleFor((x) => x.Email).NotEmpty().WithMessage("User Name Tidak Boleh Kosong")
             .EmailAddress().WithMessage("Masukkan Email Anda !");
+        RuleFor((x) => x.PhoneNumber).NotEmpty().WithMessage("Nomor HP Tidak Boleh Kosong");
         RuleFor((x) => x.Address).NotEmpty().WithMessage("Alamat tidak boleh kosong !");
         RuleFor((x) => x.Password).NotEmpty().WithMessage("Password Tidak Boleh Kosong!");
-        RuleFor((x) => x.PhoneNumber).NotEmpty().WithMessage("Nomor HP Tidak Boleh Kosong");
         RuleFor((x) => x.ConfirmPassoword)
             .NotEmpty().WithMessage("Confirm Password Tidak Boleh Kosong! !")
-            .NotEqual(x=>x.Password).WithMessage("Password Harus Sama");
+            .Equal(x => x.Password).WithMessage("Password Harus Sama");
     }
 }

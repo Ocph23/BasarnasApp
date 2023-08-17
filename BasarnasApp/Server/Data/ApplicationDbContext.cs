@@ -1,6 +1,4 @@
 ﻿using BasarnasApp.Server.Models;
-using Duende.IdentityServer.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,6 +19,7 @@ namespace BasarnasApp.Server.Data
         public DbSet<PihakTerkait> PihakTerkait { get; set; }
         public DbSet<Kejadian> Kejadian { get; set; }
         public DbSet<Pelapor> Pelapor { get; set; }
+        public DbSet<Penanganan> Penanganan{ get; set; }
 
 
 

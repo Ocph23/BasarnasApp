@@ -1,6 +1,7 @@
 ﻿using BasarnasApp.Server.Data;
 using BasarnasApp.Server.Models;
 using BasarnasApp.Server.Services.ServiceContracts;
+using BasarnasApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BasarnasApp.Server.Services
@@ -96,5 +97,8 @@ namespace BasarnasApp.Server.Services
                 throw;
             }
         }
+
+
+       
     }
 }

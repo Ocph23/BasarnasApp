@@ -7,11 +7,11 @@ namespace BasarnasMobilaApp.Pages;
 
 public partial class ProfilePage : ContentPage
 {
-	public ProfilePage()
-	{
-		InitializeComponent();
+    public ProfilePage()
+    {
+        InitializeComponent();
         BindingContext = new ProfileViewModel();
-	}
+    }
 }
 
 public class ProfileViewModel : BaseViewModel
@@ -33,7 +33,12 @@ public class ProfileViewModel : BaseViewModel
         validator = new ProfileValidator();
         UpdateProfileCommand = new Command(ProfileAction, ProfileValidate);
         Model = Account.GetProfile();
-        Model.PropertyChanged += (s, p) => {
+        if (!string.IsNullOrEmpty(Model.Photo))
+        {
+            Photo = ImageSource.FromUri(new Uri($"/images/profile/{Model.Photo}"));
+        }
+        Model.PropertyChanged += (s, p) =>
+        {
             UpdateProfileCommand = new Command(ProfileAction, ProfileValidate);
         };
     }
@@ -45,7 +50,7 @@ public class ProfileViewModel : BaseViewModel
             if (MediaPicker.Default.IsCaptureSupported)
             {
 
-                var result  = await Helper.TakePhoto();
+                var result = await Helper.TakePhoto();
                 if (result != null)
                 {
                     Model.PhotoData = result;
@@ -63,21 +68,24 @@ public class ProfileViewModel : BaseViewModel
     {
         try
         {
+            IsBusy = true;
             var service = Helper.GetService<IPelaporService>();
-            var result = await service.PostAsync(Model);
-            if (result != null)
+            var result = await service.PutAsync(Model.Id, Model);
+            if (result)
             {
+                await Account.SetProfile(Model);
                 await Application.Current.MainPage.DisplayAlert("Success", "Data Berhasil Disimpan !", "Ok");
             }
             else
             {
-                throw new SystemException("User Tidak Berhasil Dibuat !");
+                throw new SystemException("User Tidak Berhasil Diubah !");
             }
         }
         catch (Exception ex)
         {
             await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "Ok");
         }
+        finally { IsBusy = false; }
     }
 
     private bool ProfileValidate(object arg)
@@ -135,6 +143,6 @@ public class ProfileValidator : AbstractValidator<Pelapor>
             .EmailAddress().WithMessage("Masukkan Email Anda !");
         RuleFor((x) => x.Address).NotEmpty().WithMessage("Alamat tidak boleh kosong !");
         RuleFor((x) => x.PhoneNumber).NotEmpty().WithMessage("Nomor HP Tidak Boleh Kosong");
-      
+
     }
 }

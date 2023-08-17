@@ -1,10 +1,24 @@
      
-<MudDialog>
+<MudDialog Style="min-height:400px">
     <DialogContent>
-        <MudCard>
+        <h3>Penanganan : </h3>
+        <MudExpansionPanels>
+            @foreach (var item in penanganans)
+            {
+                <MudExpansionPanel Style="font-size:20px" Text="@(item.Instansi.Name)" >
+                   <MudStack>
+                        <MudTextField ReadOnly=true T="string" Label="Ditangani Oleh " Value="@item.PihakTerkait.Name" />
+                        <MudTextField ReadOnly=true T="string" Label="Status Penanganan" Value="@item.Status.ToString()" />
+                        <MudTextField ReadOnly=true Lines="5" T="string" Label="Deskripsi Penanganan" Value="@item.Deskripsi" />
+                   </MudStack>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+        <MudSpacer/>
+        <MudCard Style="margin-top:30px">
             <MudForm>
                 <MudCardContent>
-                    <MudSelect T="StatusLaporan" @bind-Value="model">
+                    <MudSelect T="StatusLaporan" Label="Status Kejadian/Laporan" @bind-Value="model.Status">
                         @foreach(var item in  Enum.GetValues(typeof(StatusLaporan)).Cast<StatusLaporan>()){
                             <MudSelectItem Value="@item" >@item</MudSelectItem>
                         }
@@ -15,22 +29,29 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton OnClick="Submit" Color="Color.Primary">Ok</MudButton>
+        <MudButton OnClick="Submit" Color="Color.Primary">Update</MudButton>
     </DialogActions>
 </MudDialog>
 
-
+@inject IKejadianService kejadianService
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-   
-    [Parameter]
-    public  StatusLaporan model {get;set;}
 
-    MudForm form;
+    [Parameter]
+    public KejadianRequest? model { get; set; }
+
+    //  public  StatusLaporan model {get;set;}
+
+    IEnumerable<PenangananRequest> penanganans = Enumerable.Empty<PenangananRequest>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        penanganans = await kejadianService.GetPenanganan(model.Id);
+    }
 
     void Submit() {
-        MudDialog.Close(DialogResult.Ok(model));
+        MudDialog.Close(DialogResult.Ok(model.Status));
     }
     void Cancel() => MudDialog.Cancel();
 }

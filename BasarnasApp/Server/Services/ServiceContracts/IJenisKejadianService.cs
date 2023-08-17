@@ -9,5 +9,6 @@ namespace BasarnasApp.Server.Services.ServiceContracts
         Task<JenisKejadian> PostAsync(JenisKejadian t);
         Task<bool> PutAsync(int id, JenisKejadian t);
         Task<bool> DeleteAsync(int id);
+       
     }
 }

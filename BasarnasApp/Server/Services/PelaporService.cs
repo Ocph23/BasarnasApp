@@ -60,14 +60,14 @@ namespace BasarnasApp.Server.Services
             }
         }
 
-        public async Task<Pelapor> GetProfile(string? userid)
+        public Task<Pelapor> GetProfile(string? userid)
         {
             try
             {
                 var result = _dbcontext.Pelapor
                     .SingleOrDefault(x => x.UserId == userid);
                 ArgumentNullException.ThrowIfNull(result, "Data Tidak Ditemukan.");
-                return result;
+                return Task.FromResult(result);
             }
             catch (Exception)
             {
@@ -113,6 +113,9 @@ namespace BasarnasApp.Server.Services
                 var result = _dbcontext.Pelapor.Where(x => x.Id == t.Id).ExecuteUpdate(
                     x => x
                     .SetProperty(x => x.Name, t.Name)
+                    .SetProperty(x=>x.PhoneNumber, t.PhoneNumber)
+                    .SetProperty(x=>x.Photo, t.Photo)
+                    .SetProperty(x=>x.Thumb, t.Thumb)
 					.SetProperty(x => x.Address, t.Address));
                 return Task.FromResult(result > 0);
             }

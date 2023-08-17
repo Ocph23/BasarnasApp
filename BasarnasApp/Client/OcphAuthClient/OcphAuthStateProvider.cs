@@ -25,7 +25,7 @@ public class OcphAuthStateProvider : AuthenticationStateProvider
 
        // string token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzRkZDJiLWRmNzYtNGYyMC1hNjcwLTgxMjk5MTRiNTdmZiIsIm5hbWUiOiJBZG1pbiIsInN1YiI6Im9jcGgyMy50ZXN0QGdtYWlsLmNvbSIsImVtYWlsIjoib2NwaDIzLnRlc3RAZ21haWwuY29tIiwianRpIjoiNjcwY2MwNmMtN2NlMi00M2MwLTk5NGQtMmU5MTljMTk2ODU2IiwibmJmIjoxNjg1Mzc3MzIzLCJleHAiOjE2ODU5ODIxMjMsImlhdCI6MTY4NTM3NzMyMywiaXNzIjoiaHR0cHM6Ly9zZG5pbnByZXN0YW5qdW5ncmlhLmFwc3BhcHVhLmNvbS8iLCJhdWQiOiJodHRwczovL3NkbmlucHJlc3Rhbmp1bmdyaWEuYXBzcGFwdWEuY29tLyJ9.w_VqVaq_J_CMVH5M7eBTDbOJ3q7CDPmLypQ5-ep2mNt32jNXw1-NQ-KASIjq6QQLUa8x9CnxH9jD7JV8EgDc3g";
 
-        ClaimsIdentity identity = new ClaimsIdentity();
+        ClaimsIdentity identity = new();
         var user = new ClaimsPrincipal(identity);
         var state = new AuthenticationState(user);
         try
@@ -35,7 +35,6 @@ public class OcphAuthStateProvider : AuthenticationStateProvider
             string issuer = "https://basarnas.apspapua.com/";
             await Task.Delay(100);
             var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken validatedToken = null;
             var key = Encoding.ASCII.GetBytes(secret);
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
@@ -47,9 +46,10 @@ public class OcphAuthStateProvider : AuthenticationStateProvider
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
 
-            }, out validatedToken);
+            }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
+            ArgumentNullException.ThrowIfNull(jwtToken, "Jwt Token Not Created");
             string id = jwtToken.Claims.FirstOrDefault(x => x.Type == "id").Value;
             var name = jwtToken.Claims.FirstOrDefault(x => x.Type == "name").Value;
             var sub = jwtToken.Claims.FirstOrDefault(x => x.Type == "sub").Value;
@@ -74,7 +74,7 @@ public class OcphAuthStateProvider : AuthenticationStateProvider
             await _client.SetToken(localStorageService);
             return state;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             NotifyAuthenticationStateChanged(Task.FromResult(state));
             return state;

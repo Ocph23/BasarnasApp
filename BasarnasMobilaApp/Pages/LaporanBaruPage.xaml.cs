@@ -41,8 +41,16 @@ public class LaporanBaruViewModel : BaseViewModel
         Model = new Kejadian();
         _ = Load();
 
-        TakePhotoCommand = new Command(async() => await TakePhoto());
+        TakePhotoCommand = new Command(async() => await TakePhoto(), ()=> !IsBusy );
 
+        this.PropertyChanged += (s, p) =>
+        {
+            if (p.PropertyName != "SaveCommand")
+            {
+                SaveCommand = new Command(SaveAction, SaveValidate);
+            }
+
+        };
         Model.PropertyChanged += (s, p) =>
         {
             SaveCommand = new Command(SaveAction, SaveValidate);
@@ -62,6 +70,7 @@ public class LaporanBaruViewModel : BaseViewModel
     {
         try
         {
+            IsBusy=true;
             var kejadianservice = Helper.GetService<IKejadianService>();
             var req = new KejadianRequest { DistrictId = Model.District.Id, Id=Model.Id, 
                 JenisKejadianId=Model.JenisKejadian.Id, LongLat=Model.LongLat,  PelaporId=Model.Pelapor.Id,
@@ -80,6 +89,7 @@ public class LaporanBaruViewModel : BaseViewModel
         {
            await Helper.ShellMessageShow("Error",ex.Message);
         }
+        finally {  IsBusy = false; }
     }
 
     private ImageSource photo =ImageSource.FromFile("noimage.jpg");
@@ -169,7 +179,7 @@ public class LaporanBaruViewModel : BaseViewModel
             if (location != null)
             {
                 Device.BeginInvokeOnMainThread(() => { 
-                    Model.LongLat = $"{location.Latitude.ToString()}; {location.Longitude.ToString()}";
+                    Model.LongLat = $"{location.Latitude.ToString()};{location.Longitude.ToString()}";
                     Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 
                 });

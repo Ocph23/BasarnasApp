@@ -20,6 +20,10 @@ namespace BasarnasApp.Shared.Models
         public StatusLaporan Status { get; set; }
         public int  PelaporId { get; set; }
         public string? PelaporName { get; set; }= string.Empty;
-        public byte[] DataPhoto { get; set; }
+        public byte[]? DataPhoto { get; set; } = default;
+
+        
+
+
     }
 }

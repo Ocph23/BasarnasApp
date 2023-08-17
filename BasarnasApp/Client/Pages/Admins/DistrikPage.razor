@@ -4,35 +4,46 @@
 @inject IDistrictService districtService
 @inject NavigationManager Navigation
 @inject IDialogService Dialog
+@inject IJSRuntime js
 
-<MudPaper style="margin:20px; padding: 30px;">
+<MudPaper Class="noprint" style="margin:20px; padding: 30px;">
     <div style="display: flex;">
         <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Distrik</MudText>
-        <MudSpacer/>
+        <MudSpacer />
         <div>
-            <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add"  >Tambah</MudButton>
-            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print"  >Cetak</MudButton>
+            <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add">Tambah</MudButton>
+            <MudButton OnClick="@(async()=> await js.InvokeVoidAsync("window.print"))" Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
         </div>
-    </div>  
+    </div>
 
-  <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
-    <Columns>
-       <TemplateColumn Title="Nomor">
-            <CellTemplate>
-                @(context.Item.index+1)
-            </CellTemplate>
-       </TemplateColumn>
-        <PropertyColumn Property="x => x.Data.Name" Title="Nama Distrik" />
-        <PropertyColumn Property="x => x.Data.Description" Title="keterangan"/>
-        <TemplateColumn Context="item" style="width:70px">
-           <CellTemplate>
-             <MudIconButton OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
-            <MudIconButton OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"></MudIconButton>
-           </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+    <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
+        <Columns>
+            <TemplateColumn Title="Nomor">
+                <CellTemplate>
+                    @(context.Item.index + 1)
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Data.Name" Title="Nama Distrik" />
+            <PropertyColumn Property="x => x.Data.Description" Title="keterangan" />
+            <TemplateColumn Context="item" style="width:70px">
+                <CellTemplate>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning">Edit</MudMenuItem>
+                        <MudMenuItem OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error">Delete</MudMenuItem>
+                    </MudMenu>
+
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
 </MudPaper>
+
+<div class="justprint">
+<CetakDistrik  Datas="datas"></CetakDistrik>
+
+</div>
+
+
 
 @code {
 
@@ -40,44 +51,49 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result  = await districtService.GetAsync();
-        datas  = result.ToList();
+        var result = await districtService.GetAsync();
+        datas = result.ToList();
     }
 
-    async Task Add(){
-          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+    async Task Add()
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditDistrikPage> { { x => x.model, new DistrictRequest() } };
         var dlg = await Dialog.Show<EditDistrikPage>("Tambah Distrik", parameters, options).Result;
-        if(!dlg.Cancelled){
-            var result  = await districtService.PostAsync(dlg.Data as DistrictRequest);
-                datas.Add(result);
-            }
-
-    }   
-
-     async Task Edit(DistrictRequest model){
-          DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
-        var parameters = new DialogParameters<EditDistrikPage> { { x => x.model, model } };
-        var dlg = await Dialog.Show<EditDistrikPage>("Edit Distrik", parameters, options).Result;
-        if(!dlg.Cancelled)
+        if (!dlg.Canceled)
         {
-            var district = dlg.Data as DistrictRequest;
-            var result  = await districtService.PutAsync(district.Id, district);
-            
+            var result = await districtService.PostAsync(dlg.Data as DistrictRequest);
+            datas.Add(result);
         }
 
-    }    
+    }
+
+    async Task Edit(DistrictRequest model)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<EditDistrikPage> { { x => x.model, model } };
+        var dlg = await Dialog.Show<EditDistrikPage>("Edit Distrik", parameters, options).Result;
+        if (!dlg.Canceled)
+        {
+            var district = dlg.Data as DistrictRequest;
+            var result = await districtService.PutAsync(district.Id, district);
+
+        }
+
+    }
 
 
     async Task Delete(DistrictRequest model)
     {
         bool? result = await Dialog.ShowMessageBox(
-                    "Warning", "Yakin Hapus Data ?", yesText:"Delete!", cancelText:"Cancel");
-        if(result is true){
+                    "Warning", "Yakin Hapus Data ?", yesText: "Delete!", cancelText: "Cancel");
+        if (result is true)
+        {
             var deleted = await districtService.DeleteAsync(model.Id);
-            if(deleted){
+            if (deleted)
+            {
                 datas.Remove(model);
-            }            
+            }
         }
-    }    
+    }
 }

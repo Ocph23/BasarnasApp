@@ -1,7 +1,8 @@
-﻿@using Microsoft.AspNetCore.Authorization;
+﻿@using Blazored.LocalStorage;
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inherits LayoutComponentBase
-@implements IAsyncDisposable
+
 
 
 <MudThemeProvider />
@@ -27,65 +28,53 @@
 
 
 
+<audio hidden id="myAudio">
+  <source src="alarm.mp3" type="audio/mpeg">
+</audio>
+
+
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager Navigation
 @inject IPihakTerkaitService pihakTerkaitService
 
+@inject ILocalStorageService localStorage
 @inject IJSRuntime js
+@inject SignalRService signalr
 
 @code {
     bool _drawerOpen = true;
+
+    PihakTerkaitRequest profile;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
 
-    private static HubConnection? hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/apphub"))
-            .Build();
-
-        hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
-      {
-      await js.InvokeVoidAsync("OnKejadianFire",$"{user} - {message}");
-        StateHasChanged();
-      });
-
-        await hubConnection.StartAsync();
-
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         if (authState.User.Identity.IsAuthenticated && authState.User.IsInRole("Instansi"))
         {
+            profile = await localStorage.GetItemAsync<PihakTerkaitRequest>("profile");
+            if(profile ==null)
+            {
+                profile = await pihakTerkaitService.GetProfile();
+                await localStorage.SetItemAsync<PihakTerkaitRequest>("profile", profile);
+
+            }
+
+            //await signalr.SetProfile(profile);
             Navigation.NavigateTo("/instansi");
-            var data = await pihakTerkaitService.GetProfile();
         }
         else
         {
             Navigation.NavigateTo("/account/login", true);
         }
+
+        StateHasChanged();
     }
 
-    private async Task Send()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("SendMessage", "userInput", "messageInput");
-        }
-    }
-
-    public bool IsConnected =>
-        hubConnection?.State == HubConnectionState.Connected;
-
-    public async ValueTask DisposeAsync()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.DisposeAsync();
-        }
-    }
 }

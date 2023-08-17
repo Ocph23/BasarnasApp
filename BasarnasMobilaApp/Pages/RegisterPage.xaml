@@ -68,6 +68,10 @@
                         </Grid>
                     </StackLayout>
                 </Frame>
+                <Grid>
+                    <Label  VerticalOptions="Center" Margin="0,10" TextColor="OrangeRed" FontSize="Small" Text="{Binding ErrorMessage}"></Label>
+                    <ActivityIndicator HeightRequest="35" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                </Grid>
                 <Button Margin="0,20" Text="Register" Command="{Binding RegisterCommand}"></Button>
                 <HorizontalStackLayout>
                     <Label Text="Punya Akun ? "></Label>

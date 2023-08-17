@@ -29,6 +29,7 @@ Authorization: bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEwODhkMzg4L
     "DistrictId":1,
     "LongLat":"-2.611318, 140.678708",
     "Photo":"",
+    "DataPhoto":"",
     "Tanggal":"2023-07-01T13:00:00",
     "PelaporId":1,
     "Status":0

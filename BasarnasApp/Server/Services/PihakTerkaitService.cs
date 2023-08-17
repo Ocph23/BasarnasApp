@@ -1,6 +1,7 @@
 ﻿using BasarnasApp.Server.Data;
 using BasarnasApp.Server.Models;
 using BasarnasApp.Server.Services.ServiceContracts;
+using BasarnasApp.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,7 +67,7 @@ namespace BasarnasApp.Server.Services
             }
         }
 
-        public async Task<PihakTerkait> GetProfile(string? userid)
+        public Task<PihakTerkait> GetProfile(string? userid)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace BasarnasApp.Server.Services
                     .Include(x => x.District)
                     .SingleOrDefault(x => x.UserId == userid);
                 ArgumentNullException.ThrowIfNull(result, "Data Tidak Ditemukan.");
-                return result;
+                return Task.FromResult(result);
             }
             catch (Exception)
             {
@@ -83,12 +84,12 @@ namespace BasarnasApp.Server.Services
             }
         }
 
-        public async Task<PihakTerkait> PostAsync(PihakTerkait t)
+        public async Task<PihakTerkait> PostAsync(PihakTerkait t, string password)
         {
             try
             {
                 var user = new ApplicationUser(t.Email) { Email = t.Email,  EmailConfirmed = true };
-                var userCreated = await _userManager.CreateAsync(user, "Password@123");
+                var userCreated = await _userManager.CreateAsync(user, password);
                 if (userCreated.Succeeded)
                 {
                    await _userManager.AddToRoleAsync(user, "Instansi");
@@ -124,8 +125,32 @@ namespace BasarnasApp.Server.Services
                 var result = _dbcontext.PihakTerkait.Where(x => x.Id == t.Id).ExecuteUpdate(
                     x => x
                     .SetProperty(x => x.Name, t.Name)
+                    .SetProperty(x => x.ProfileName, t.ProfileName)
+                    .SetProperty(x => x.ProfileJabatan, t.ProfileJabatan)
+                    .SetProperty(x => x.ProfileAddress, t.ProfileAddress)
                     .SetProperty(x => x.Description, t.Description));
                 return Task.FromResult(result > 0);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public async Task<bool> ChangePassword(string id, ChangeUserPasswordRequest t)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                //if (user.Email.ToLower() != t.Email.ToLower())
+                //{
+                //    var emailConfirmationCode = await _userManager.GenerateChangeEmailTokenAsync(user,t.Email);
+                //    var changeResult=  await _userManager.ChangeEmailAsync(user, t.Email, emailConfirmationCode);
+                //}
+
+                await _userManager.ChangePasswordAsync(user, t.OldPassword, t.NewPassword);
+                return true;
             }
             catch (Exception)
             {

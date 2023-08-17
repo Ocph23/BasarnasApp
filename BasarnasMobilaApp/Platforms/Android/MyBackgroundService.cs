@@ -2,8 +2,10 @@
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
+using BasarnasApp.Shared.Models;
 using BasarnasMobilaApp;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Text.Json;
 
 namespace BasarnasMobilaApp.Platforms.Android;
 
@@ -33,7 +35,7 @@ internal class MyBackgroundService : Service
         notification = new NotificationCompat.Builder(this,
                 MainApplication.ChannelId)
             .SetContentText(input)
-            .SetSmallIcon(Resource.Mipmap.appicon)
+            .SetSmallIcon(Resource.Mipmap.basarnasicon)
             .SetContentIntent(pendingIntent);
 
         // Increment the BadgeNumber
@@ -61,13 +63,9 @@ internal class MyBackgroundService : Service
                 .WithUrl(Helper.Url + "/apphub")
                 .Build();
 
-            hubConnection.On<string>("ReceiveMessage", (message) =>
+            hubConnection.On<string>("KejadianMessage", (message) =>
             {
-                // Display the message in a notification
-                BadgeNumber++;
-                notification.SetNumber(BadgeNumber);
-                notification.SetContentTitle(message);
-                StartForeground(myId, notification.Build());
+                startForegroundService(message);
             });
             try
             {
@@ -102,4 +100,52 @@ internal class MyBackgroundService : Service
 
         await EnsureHubConnection();
     }
+
+
+
+    private string NOTIFICATION_CHANNEL_ID = "1000";
+    private int NOTIFICATION_ID = 1;
+    private string NOTIFICATION_CHANNEL_NAME = "notification";
+    private string NOTIFICATION_GROUP_NAME = "com.ocph23.basarnasmobilaapp";
+
+    private void startForegroundService(string message)
+    {
+        var notifcationManager = GetSystemService(Context.NotificationService) as NotificationManager;
+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        {
+            createNotificationChannel(notifcationManager);
+        }
+
+        var notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        string newMessage = string.Empty;
+        string seccoundLine = string.Empty;
+        var data = JsonSerializer.Deserialize<KejadianRequest>(message, Helper.JsonOption);
+        if(data != null)
+        {
+            newMessage = $"Terjadi {data.JenisKejadianName} di {data.DistrictName}";
+            seccoundLine = $"Dilaporkan Oleh : {seccoundLine}";
+        }
+
+        BadgeNumber++;
+        notification.SetNumber(BadgeNumber);
+        notification.SetAutoCancel(false);
+        notification.SetOngoing(true);
+        notification.SetSmallIcon(Resource.Mipmap.basarnasicon);
+        notification.SetContentTitle("Laporan Baru");
+        notification.SetContentText(message);
+        notification.SetGroup(NOTIFICATION_GROUP_NAME);
+        notification.SetStyle(new NotificationCompat.InboxStyle()
+            .AddLine(newMessage)
+            .AddLine(seccoundLine));
+        StartForeground(NOTIFICATION_ID, notification.Build());
+        NOTIFICATION_ID++;
+    }
+    private void createNotificationChannel(NotificationManager notificationMnaManager)
+    {
+        var channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME,
+        NotificationImportance.High);
+        notificationMnaManager.CreateNotificationChannel(channel);
+    }
+
 }

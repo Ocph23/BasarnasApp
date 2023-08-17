@@ -1,0 +1,74 @@
+﻿<div style="width:100%; margin-bottom:30px; display:flex;justify-content:center;flex-direction:column; align-items:center">
+    <h4>LAPORAN KEJADIAN DITANGANI </h4>
+    @if (Range != null)
+    {
+        <h3>@ShowDate()</h3>
+    }
+</div>
+
+<table class="table-cetak">
+    <tr>
+        <th rowspan="3">No</th>
+        <th rowspan="3">Kesatuan</th>
+        <th rowspan="3">Jumlah</th>
+        <th colspan="@Penyebabs.Count">Penyebab Kecelakaan</th>
+        <th rowspan="3">Keterangan</th>
+    </tr>
+    <tr>
+        <th colspan="7">Kurang Hati 2</th>
+        @for(var i=8; i<Penyebabs.Count; i++)
+        {
+            <th rowspan="2">@Penyebabs[i].EnumToString()</th>
+        }
+    </tr>
+    <tr>
+        @for (var i =1; i < 8; i++)
+        {
+            <th  >@Penyebabs[i].EnumToString()</th>
+        }
+    </tr>
+
+    @foreach (var item in Datas)
+    {
+       <tr>
+            <td>@item.No</td>
+            <td>@item.Kesatuan</td>
+            <td style="text-align:center">@item.Penyebab.Sum()</td>
+            @foreach (var p in item.Penyebab)
+            {
+                <td style="text-align:center">@p</td>
+            }
+       </tr> 
+    }
+
+
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable<ReportModel> Datas { get; set; }
+
+
+    [Parameter]
+    public DateRange Range { get; set; }
+
+
+
+    public List<Penyebab> Penyebabs=> Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>().ToList();
+
+
+    protected override Task OnInitializedAsync()
+    {
+
+
+        return base.OnInitializedAsync();
+    }
+
+    string ShowDate()
+    {
+
+        return $"{DateOnly.FromDateTime(Range.Start.Value).ToString()} - {DateOnly.FromDateTime(Range.End.Value).ToString()}";
+    }
+}
+
+

@@ -56,6 +56,7 @@ namespace OcphApiAuth.Client
             await localStorage.RemoveItemAsync("token");
             await localStorage.RemoveItemAsync("userName");
             await localStorage.RemoveItemAsync("email");
+            await localStorage.RemoveItemAsync("profile");
             navigationManager.NavigateTo("/account/login");
             var result = await authStateProvider.GetAuthenticationStateAsync();
         }

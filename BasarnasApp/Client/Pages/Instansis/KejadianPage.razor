@@ -4,63 +4,149 @@
 
 @inject IJSRuntime js
 @inject IKejadianService kejadianService
+@inject ILocalStorageService localStorageService
+@inject SignalRService signalr
 
-
-
-<MudPaper style="margin:20px; padding: 30px;">
+<MudPaper class="noprint" style="margin:20px; padding: 30px;">
     <div style="display: flex;">
         <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Data Kejadian</MudText>
         <MudSpacer />
-        <div>
-            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+        <div style="display:flex">
+            <MudDateRangePicker @ref="_picker" AutoClose=false Style="width:250px; margin-right:20px" Label="Tanggal" @bind-DateRange="_dateRange">
+                <PickerActions>
+                    <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
+                    <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
+                    <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
+                </PickerActions>
+            </MudDateRangePicker>
+            <MudButton OnClick="Cetak" Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
         </div>
     </div>
 
-    <MudDataGrid Items="@datas.Select((x,i)=> new {Data=x, index=i})">
+    <MudDataGrid Items="@datas.Where(x=> FilterDate(x.Tanggal)).OrderByDescending(x=>x.Tanggal).Select((x,i)=> new {Data=x, index=i})">
         <Columns>
-            <TemplateColumn Title="Nomor">
+            <TemplateColumn Title="Nomor" Style="width:50px">
                 <CellTemplate>
                     @(context.Item.index + 1)
                 </CellTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.Data.Kode" Title="Tanggal" />
+            <PropertyColumn Property="x => x.Data.Kode" Title="Kode" />
             <PropertyColumn Property="x => x.Data.Tanggal" Title="Tanggal" />
             <PropertyColumn Property="x => x.Data.JenisKejadianName" Title="Kejadian" />
-            <PropertyColumn Property="x => x.Data.DistrictName" Title="Distrik" />
+            <PropertyColumn Property="x => x.Data.PelaporName" Title="Pelapor" />
+            <PropertyColumn Property="x => x.Data.Status" Title="Status" />
             <TemplateColumn Context="item" style="width:70px">
                 <CellTemplate>
-                    @if (!string.IsNullOrEmpty(item.Item.Data.LongLat))
-                    {
-                        <MudIconButton OnClick="@(()=>ShowMap(item.Item.Data))" Icon="@Icons.Material.Filled.Map" Variant="Variant.Filled" Color="Color.Info"></MudIconButton>
-                    }
-                    <MudIconButton OnClick="@(()=>UbahStatus(item.Item.Data))" Icon="@Icons.Material.Filled.ChangeCircle" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem OnClick="@(()=>UbahStatus(item.Item.Data))" Icon="@Icons.Material.Filled.ChangeCircle" Variant="Variant.Filled" Color="Color.Warning">Penanganan</MudMenuItem>
+                        @if (!string.IsNullOrEmpty(item.Item.Data.LongLat))
+                        {
+                            <MudMenuItem OnClick="@(()=>ShowMap(item.Item.Data))" Icon="@Icons.Material.Filled.Map" Variant="Variant.Filled" Color="Color.Info">Lokasi</MudMenuItem>
+                        }
+
+                        @if (!string.IsNullOrEmpty(item.Item.Data.Photo))
+                        {
+                            <MudMenuItem OnClick="@(()=>ShowPhoto(item.Item.Data))" Icon="@Icons.Material.Filled.Image" Variant="Variant.Filled" Color="Color.Info">Photo</MudMenuItem>
+                        }
+                    </MudMenu>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
     </MudDataGrid>
 </MudPaper>
 
+
+<div class="justprint">
+
+    @if (profile != null && profile.Instansi.Id == 1)
+    {
+        <CetakKejadianLain Range="_dateRange" Datas="reportData"></CetakKejadianLain>
+    }
+    else
+    {
+        <CetakKejadian Range="_dateRange" Datas="datas.Where(x=> FilterDate(x.Tanggal))"></CetakKejadian>
+    }
+
+</div>
+
+
 @inject IDialogService Dialog
-
+@implements IDisposable
 @code {
-
+    DateRange? _dateRange;
     public string Height = "100vh";
     ICollection<KejadianRequest> datas = new List<KejadianRequest>();
+    ICollection<ReportModel> reportData = new List<ReportModel>();
+    MudDateRangePicker _picker;
+    PihakTerkaitRequest profile;
+
+
+    bool FilterDate(DateTime tanggal)
+    {
+        var tgl = DateOnly.FromDateTime(tanggal);
+        if (_dateRange == null)
+        {
+            return false;
+        }
+
+        if (_dateRange.End == null)
+        {
+            return DateOnly.FromDateTime(tanggal) == DateOnly.FromDateTime(_dateRange.Start.Value);
+        }
+
+        if (DateOnly.FromDateTime(_dateRange.Start.Value) == DateOnly.FromDateTime(_dateRange.End.Value))
+        {
+            _dateRange.End = _dateRange.End.Value.AddDays(1).AddMinutes(-1);
+        }
+
+
+        return tanggal >= _dateRange.Start && tanggal <= _dateRange.End;
+
+
+    }
+
+
+    public async Task Cetak()
+    {
+        reportData.Clear();
+
+
+        var data = await kejadianService.GePenangananByPihakId(profile.Id);
+
+        var report = new ReportModel() { No = 1, Kesatuan = profile.Name };
+
+        foreach (var item in Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>())
+        {
+            if (item != Penyebab.None)
+            {
+                report.Penyebab.Add(data.Where( x => FilterDate(x.Tanggal) && x.Penyebab == item).Count());
+            }
+        }
+        this.reportData.Add(report);
+        await InvokeAsync(() => StateHasChanged());
+        await js.InvokeVoidAsync("window.print");
+    }
+
+
     protected override async void OnInitialized()
     {
-        var result  = await kejadianService.GetAsync();
+        profile = await localStorageService.GetItemAsync<PihakTerkaitRequest>("profile");
+        var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+        _dateRange = new DateRange(now, null);
+        var result = await kejadianService.GetAsync();
         foreach (var item in result)
         {
             datas.Add(item);
         }
-
+        signalr.OnKejadianChange += OnKejadianAction;
         StateHasChanged();
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
             StateHasChanged();
-      //  await js.InvokeVoidAsync("initMap");
+        return Task.CompletedTask;
     }
 
     async Task ShowMap(KejadianRequest kejadian)
@@ -71,6 +157,28 @@
     }
     async Task UbahStatus(KejadianRequest kejadian)
     {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters<EditPenangananPage> { { x => x.model, kejadian } };
+        var dlg = await Dialog.Show<EditPenangananPage>("Penanganan Kejadian", parameters, options).Result;
+    }
 
+    public void OnKejadianAction(KejadianRequest kejadian)
+    {
+        datas.Add(kejadian);
+        StateHasChanged();
+
+    }
+    public void Dispose()
+    {
+        signalr.OnKejadianChange -= OnKejadianAction;
+    }
+
+
+
+    async Task ShowPhoto(KejadianRequest kejadian)
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true };
+        var parameters = new DialogParameters<PhotoPage> { { x => x.model, $"/images/kejadian/{kejadian.Photo}" } };
+        var dlg = await Dialog.Show<PhotoPage>("Photo Kejadian", parameters, options).Result;
     }
 }

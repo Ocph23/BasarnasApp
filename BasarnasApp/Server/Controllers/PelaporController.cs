@@ -12,9 +12,9 @@ namespace BasarnasApp.Server.Controllers
     [Route("api/[controller]")]
     public class PelaporController : ControllerBase
     {
-     
+
         private readonly ILogger<PelaporController> _logger;
-        private readonly IPelaporService _pelaporService ;
+        private readonly IPelaporService _pelaporService;
 
         public PelaporController(ILogger<PelaporController> logger, IPelaporService pelaporService)
         {
@@ -56,7 +56,7 @@ namespace BasarnasApp.Server.Controllers
             try
             {
                 var claim = User.Claims.Where(x => x.Type == "id").FirstOrDefault();
-                ArgumentNullException.ThrowIfNull(claim,"Anda tidak memiliki akses !");
+                ArgumentNullException.ThrowIfNull(claim, "Anda tidak memiliki akses !");
                 var result = await _pelaporService.GetProfile(claim.Value);
                 return Ok(result);
             }
@@ -72,15 +72,16 @@ namespace BasarnasApp.Server.Controllers
         {
             try
             {
-				var Pelapor = new Pelapor
-				{
-					Id = request.Id,
-					Name = request.Name,
-					Email = request.Email,
-					Password = request.Password,
-					Address = request.Address
-				};
-				var result = await _pelaporService.PostAsync(Pelapor);
+                var Pelapor = new Pelapor
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    Password = request.Password,
+                    Address = request.Address
+                };
+                var result = await _pelaporService.PostAsync(Pelapor);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -90,29 +91,28 @@ namespace BasarnasApp.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,  PelaporRequest request)
+        public async Task<IActionResult> Put(int id, PelaporRequest request)
         {
             try
             {
-				var model = new Pelapor
-				{
-					Id = request.Id,
-					Name = request.Name,
-					Email = request.Email,
-					Password = request.Password,
-					Address = request.Address, 
+                var model = new Pelapor
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    Address = request.Address,
+                    PhoneNumber = request.PhoneNumber,
                     Photo = request.Photo,
                     Thumb = request.Thumb
-				};
+                };
 
-                if (request.DataPhoto != null && request.DataPhoto.Length > 0)
+                if (request.PhotoData != null && request.PhotoData.Length > 0)
                 {
-                    var logo = await Helper.CreatePhotoProfile(request.DataPhoto);
-                    model.Photo= logo.File;
+                    var logo = await Helper.CreatePhotoProfile(request.PhotoData);
+                    model.Photo = logo.File;
                     model.Thumb = logo.Thumb;
                 }
 
-				var result = await _pelaporService.PutAsync(id, model);
+                var result = await _pelaporService.PutAsync(id, model);
                 return Ok(result);
             }
             catch (Exception ex)

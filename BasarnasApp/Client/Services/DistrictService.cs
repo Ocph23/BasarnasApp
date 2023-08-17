@@ -25,7 +25,7 @@ public class DistrictService : IDistrictService
     {
         try
         {
-         //  await _httpClient.SetToken(_localStorageService);
+           await _httpClient.SetToken(_localStorageService);
             var data = await _httpClient.GetFromJsonAsync<IEnumerable<DistrictRequest>>($"{controller}");
             return data!;
         }
@@ -56,6 +56,7 @@ public class DistrictService : IDistrictService
         {
             var response = await _httpClient.PostAsJsonAsync<DistrictRequest>($"{controller}",t);
             if(response.IsSuccessStatusCode){
+                _snackbar.Add("Data Berhasil Disimpan.", Severity.Success);
                 return await response.GetResult<DistrictRequest>();
             }
             throw new SystemException( await response.GetError());
@@ -73,6 +74,7 @@ public class DistrictService : IDistrictService
         {
             var response = await _httpClient.PutAsJsonAsync<DistrictRequest>($"{controller}/{id}",t);
             if(response.IsSuccessStatusCode){
+                _snackbar.Add("Data Berhasil Disimpan.", Severity.Success);
                 return await response.GetResult<bool>();
             }
             throw new SystemException( await response.GetError());
@@ -89,6 +91,10 @@ public class DistrictService : IDistrictService
        try
         {
             var deleted = await _httpClient.DeleteFromJsonAsync<bool>($"{controller}/{id}");
+            if (deleted)
+            {
+                _snackbar.Add("Data Berhasil Dihapus.", Severity.Success);
+            }
              return deleted;
         }
         catch (Exception ex)

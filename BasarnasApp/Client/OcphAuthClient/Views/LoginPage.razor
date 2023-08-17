@@ -17,14 +17,17 @@
 @inject  ISnackbar toasService
 
 <MudGrid style="height:100vh;">
-    <MudItem xs="7" style="display: flex; flex-direction:column; justify-content:center; align-items:center; color:white ">
+    <MudItem xs="8" style="display: flex; flex-direction:column; justify-content:center; align-items:center; color:white ">
         <h1>EMERGENCY SYSTEM</h1>
         <h1>BASARNAS KOTA JAYAPURA</h1>
           <MudButton class="mt-5"  Variant="Variant.Filled" Color="Color.Primary" 
                                 DisableElevation="true" OnClick="OnValidSubmitAction">Download Android App</MudButton>
     </MudItem>
-    <MudItem xs="5" style="display: flex; align-items:center">
-           <MudPaper style="height: 60%; width:100%; margin:30px; padding:40px !important" Class="pa-4">
+    <MudItem xs="4" style="display: flex; align-items:center">
+           <MudPaper style="width:100%; margin:30px; padding:40px !important" Class="pa-4">
+               <div style="width:100%; display:flex;justify-content:center">
+                <img style="width:20%; margin:10px" src="/basarnas.png" />
+               </div>
                 <h1 class="mb-5">Login</h1>
                 <MudForm @ref="form" >
                     <MudTextField T="string" Label="User Name" Required="true" RequiredError="Email is required!" 

@@ -1,0 +1,36 @@
+﻿<div style="width:100%; margin-bottom:50px; display:flex;justify-content:center;flex-direction:column; align-items:center">
+    <h4>LAPORAN DATA INSTANSI </h4>
+  
+</div>
+<table class="table-cetak">
+    <tr>
+        <th>No</th>
+        <th>Nama</th>
+    </tr>
+    @if (Datas != null)
+    {
+        @foreach (var item in @Datas.Select((x, i) => new { Data = x, index = i }))
+        {
+            <tr>
+
+                <td>@(item.index + 1)</td>
+                <td>@item.Data.Name</td>
+                <td>@item.Data.Description</td>
+            </tr>
+        }
+    }
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable<InstansiRequest> Datas { get; set; }
+
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+  
+}
+
+

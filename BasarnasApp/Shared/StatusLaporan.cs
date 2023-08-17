@@ -10,4 +10,14 @@
 
     }
 
+
+    public enum StatusPenganan
+    {
+        Belum,
+        Ditangani,
+        Selesai,
+        Batal
+
+    }
+
 }

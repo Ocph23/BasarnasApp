@@ -10,5 +10,6 @@ namespace BasarnasApp.Client.Services
         Task<bool> PutAsync(int id, PihakTerkaitRequest t);
         Task<bool> DeleteAsync(int id);
         Task<PihakTerkaitRequest> GetProfile();
+        Task<bool> ChangePassword(string id, ChangeUserPasswordRequest t);
     }
 }

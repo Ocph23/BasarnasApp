@@ -33,9 +33,12 @@ namespace OcphApiAuth.Client
             try
             {
                 var token = await localStorageService.GetItemAsync<string>("token");
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
         }

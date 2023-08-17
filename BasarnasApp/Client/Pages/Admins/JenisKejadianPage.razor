@@ -11,7 +11,6 @@
         <MudSpacer/>
         <div>
             <MudButton OnClick="Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add"  >Tambah</MudButton>
-            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print"  >Cetak</MudButton>
         </div>
     </div>  
 
@@ -26,9 +25,11 @@
         <PropertyColumn Property="x => x.Data.Description" Title="Keterangan"/>
         <TemplateColumn Context="item" Style="width:70px">
            <CellTemplate>
-             <MudIconButton OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning"></MudIconButton>
-            <MudIconButton OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"></MudIconButton>
-           </CellTemplate>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem OnClick="@(()=>Edit(item.Item.Data))" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Warning">Edit</MudMenuItem>
+                        <MudMenuItem OnClick="@(()=>Delete(item.Item.Data))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error">Delete</MudMenuItem>
+                    </MudMenu>
+                </CellTemplate>
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
@@ -48,7 +49,8 @@
           DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditJenisKejadianPage> { { x => x.model, new JenisKejadianRequest() } };
         var dlg = await Dialog.Show<EditJenisKejadianPage>("Tambah Jenis Kejadian", parameters, options).Result;
-        if(!dlg.Cancelled){
+        if (!dlg.Canceled)
+        {
             var result  = await jenisKejadianService.PostAsync(dlg.Data as JenisKejadianRequest);
                 datas.Add(result);
             }
@@ -59,7 +61,7 @@
           DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditJenisKejadianPage> { { x => x.model, model } };
         var dlg = await Dialog.Show<EditJenisKejadianPage>("Edit Jenis Kejadian", parameters, options).Result;
-        if(!dlg.Cancelled)
+        if (!dlg.Canceled)
         {
             var jenisKejadian = dlg.Data as JenisKejadianRequest;
             var result  = await jenisKejadianService.PutAsync(jenisKejadian.Id, jenisKejadian);

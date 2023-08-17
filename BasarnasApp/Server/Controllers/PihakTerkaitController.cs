@@ -82,7 +82,7 @@ namespace BasarnasApp.Server.Controllers
                     UserId = request.UserId,
 
                 };
-                var result = await _pihakTerkaitService.PostAsync(pihakTerkait);
+                var result = await _pihakTerkaitService.PostAsync(pihakTerkait , request.Password);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -103,11 +103,29 @@ namespace BasarnasApp.Server.Controllers
                     Description = request.Description,
                     District = new District { Id = request.District.Id },
                     Instansi = new Instansi { Id = request.Instansi.Id },
+                    ProfileName = request.ProfileName,
+                    ProfileAddress = request.ProfileAddress,
+                    ProfileJabatan = request.ProfileJabatan,
                     Email = request.Email,
                     UserId = request.UserId,
 
                 };
                 var result = await _pihakTerkaitService.PutAsync(id, pihakTerkait);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPut("changepassword/{id}")]
+        public async Task<IActionResult> ChangePassword(string id, ChangeUserPasswordRequest request)
+        {
+            try
+            {
+                var result = await _pihakTerkaitService.ChangePassword(id, request);
                 return Ok(result);
             }
             catch (Exception ex)

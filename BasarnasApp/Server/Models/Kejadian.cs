@@ -12,9 +12,18 @@ namespace BasarnasApp.Server.Models
         public string? Photo { get; set; }
         public DateTime Tanggal { get; set; }
         public StatusLaporan Status { get; set; }
-        public ICollection<PihakTerkait>? PihakTerkait { get; set; } =new List<PihakTerkait>();
+        public ICollection<Penanganan>? Penanganan { get; set; } =new List<Penanganan>();
         public string? Thumb { get;  set; }
         public Pelapor Pelapor { get; set; }
+
+        public void AddPenanganan(Penanganan penanganan)
+        {
+            var oldPenanganan = Penanganan.FirstOrDefault(x => x.PihakTerkait.Id == penanganan.PihakTerkait.Id);
+            if (oldPenanganan == null)
+            {
+                Penanganan.Add(penanganan);
+            }
+        }
     }
 
 }

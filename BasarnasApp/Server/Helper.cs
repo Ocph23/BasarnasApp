@@ -14,7 +14,7 @@ public static class Helper
 {
 
     public static string ImageKejadianPath => Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/kejadian/");
-    public static string ThumbPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot/images/thumbs/");
+    public static string ThumbPath => Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/thumbs/");
     public static string VideoPath => Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/videos/");
     public static string ProfilePath => Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profiles/");
     public static string LogoPath => Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/logo/");
@@ -41,7 +41,7 @@ public static class Helper
             File.WriteAllBytes(ImageKejadianPath + fileName, data);
            var thumb = CreateThumbFile(data);
 
-            if (oldFile != null)
+            if (!string.IsNullOrEmpty(oldFile))
             {
                 File.Delete(ImageKejadianPath + oldFile);
             }
@@ -78,11 +78,11 @@ public static class Helper
                 Directory.CreateDirectory(ProfilePath);
             }
             File.WriteAllBytes(ProfilePath + fileName, data);
-            var thumb = CreateThumbFile(data);      
+            var thumb = CreateThumbFile(data);
 
-            if (oldFile != null)
+            if (!string.IsNullOrEmpty(oldFile))
             {
-                File.Delete(ImageKejadianPath + oldFile);
+                File.Delete(ProfilePath + oldFile);
             }
 
             return Task.FromResult((fileName, thumb));
@@ -105,9 +105,9 @@ public static class Helper
 
             File.WriteAllBytes(LogoPath + fileName, data);
             var thumb = CreateThumbFile(data);  
-             if (oldFile != null)
+             if (!string.IsNullOrEmpty(oldFile))
             {
-                File.Delete(ImageKejadianPath + oldFile);
+                File.Delete(LogoPath + oldFile);
             }    
             return Task.FromResult((fileName, thumb));
         }

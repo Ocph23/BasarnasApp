@@ -17,6 +17,11 @@
                                       For="@(() => model.Email)"
                                       Immediate="true"
                                       Label="Email" />
+
+                        <MudTextField @bind-Value="model.Password"
+                                      For="@(() => model.Password)"
+                                      Immediate="true"
+                                      Label="Password" />
                     }
 
                     <MudSelect T="InstansiRequest" Label="Instansi"
