@@ -57,16 +57,10 @@
 
 
 <div class="justprint">
-
-    @if (profile != null && profile.Instansi.Id == 1)
+    @if (reportData != null && reportData.Count > 0)
     {
-        <CetakKejadianLain Range="_dateRange" Datas="reportData"></CetakKejadianLain>
+        <CetakKejadian  Pihak="@profile.Name"  Instansi="@profile.Instansi.Name" Range="_dateRange" Datas="reports.Where(x=> FilterDate(x.Tanggal))"></CetakKejadian>
     }
-    else
-    {
-        <CetakKejadian Range="_dateRange" Datas="datas.Where(x=> FilterDate(x.Tanggal))"></CetakKejadian>
-    }
-
 </div>
 
 
@@ -79,8 +73,6 @@
     ICollection<ReportModel> reportData = new List<ReportModel>();
     MudDateRangePicker _picker;
     PihakTerkaitRequest profile;
-
-
     bool FilterDate(DateTime tanggal)
     {
         var tgl = DateOnly.FromDateTime(tanggal);
@@ -104,24 +96,42 @@
 
 
     }
-
-
+    List<ReportKejadianModel> reports = new List<ReportKejadianModel>();
     public async Task Cetak()
     {
         reportData.Clear();
-
-
+        reports.Clear();
         var data = await kejadianService.GePenangananByPihakId(profile.Id);
-
-        var report = new ReportModel() { No = 1, Kesatuan = profile.Name };
-
-        foreach (var item in Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>())
+        foreach (var item in datas)
         {
-            if (item != Penyebab.None)
+            var d = new ReportKejadianModel
+                {
+                    Kejadian = item.JenisKejadianName,
+                    PihakTerkait = profile.Name,
+                    Tanggal = item.Tanggal, 
+                    Pelapor = item.PelaporName
+                };
+
+            if (data != null)
             {
-                report.Penyebab.Add(data.Where( x => FilterDate(x.Tanggal) && x.Penyebab == item).Count());
+                var x = data.FirstOrDefault(z => z.KejadianId == item.Id);
+                if (x != null)
+                {
+                    d.Lokasi = x.Lokasi;
+                }
+            }
+            reports.Add(d);
+        }
+
+        foreach (var item in data)
+        {
+            var a = datas.FirstOrDefault(x => x.Id == item.KejadianId);
+            if (a != null)
+            {
+                a.Lokasi = item.Lokasi;
             }
         }
+        var report = new ReportModel() { No = 1, Kesatuan = profile.Name };
         this.reportData.Add(report);
         await InvokeAsync(() => StateHasChanged());
         await js.InvokeVoidAsync("window.print");

@@ -52,9 +52,6 @@ namespace BasarnasApp.Server.Controllers
                                Tanggal = a.Tanggal,
 
                            };
-
-
-
                 return Ok(data);
             }
             catch (Exception ex)
@@ -240,17 +237,13 @@ namespace BasarnasApp.Server.Controllers
                     PihakTerkait = new PihakTerkait
                     {
                         Id = req.PihakTerkait.Id,
-                    },
+                    },        
+                    Lokasi = req.Lokasi,
                     Status = req.Status,
                     Id = req.Id
 
                 };
                 bool result = await _kejadianService.UpdatePenanganan(model);
-
-
-
-
-
                 return Ok(result);
             }
             catch (Exception ex)

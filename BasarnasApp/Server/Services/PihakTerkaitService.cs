@@ -24,7 +24,7 @@ namespace BasarnasApp.Server.Services
             {
                 var data = _dbcontext.PihakTerkait
                     .Where(x => x.Id == id).ExecuteDelete();
-                return Task.FromResult(data>0);
+                return Task.FromResult(data > 0);
             }
             catch (Exception)
             {
@@ -88,11 +88,11 @@ namespace BasarnasApp.Server.Services
         {
             try
             {
-                var user = new ApplicationUser(t.Email) { Email = t.Email,  EmailConfirmed = true };
+                var user = new ApplicationUser(t.Email) { Email = t.Email, EmailConfirmed = true };
                 var userCreated = await _userManager.CreateAsync(user, password);
                 if (userCreated.Succeeded)
                 {
-                   await _userManager.AddToRoleAsync(user, "Instansi");
+                    await _userManager.AddToRoleAsync(user, "Instansi");
 
                     t.UserId = user.Id;
 
@@ -101,9 +101,9 @@ namespace BasarnasApp.Server.Services
 
                     _dbcontext.PihakTerkait.Add(t);
                     var result = _dbcontext.SaveChanges();
-                    if(result<=0)
+                    if (result <= 0)
                     {
-                       await _userManager.DeleteAsync(user);
+                        await _userManager.DeleteAsync(user);
                     }
                     else
                     {
@@ -149,8 +149,17 @@ namespace BasarnasApp.Server.Services
                 //    var changeResult=  await _userManager.ChangeEmailAsync(user, t.Email, emailConfirmationCode);
                 //}
 
-                await _userManager.ChangePasswordAsync(user, t.OldPassword, t.NewPassword);
-                return true;
+                var changeResult = await _userManager.ChangePasswordAsync(user, t.OldPassword, t.NewPassword);
+                if (changeResult.Succeeded)
+                {
+                    return true;
+                }
+
+
+                var err = changeResult.Errors.FirstOrDefault();
+                if (err != null)
+                    throw new SystemException(err.Description);
+                throw new SystemException("Password Tidak Berhasil Diubah.");
             }
             catch (Exception)
             {

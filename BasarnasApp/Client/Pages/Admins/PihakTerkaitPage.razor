@@ -46,7 +46,6 @@
 </div>
 
 @code {
-
     ICollection<PihakTerkaitRequest> datas = new List<PihakTerkaitRequest>();
 
     protected override async Task OnInitializedAsync()
@@ -59,20 +58,26 @@
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditPihakTerkaitPage> { { x => x.model, new PihakTerkaitRequest() } };
-        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Tambah Distrik", parameters, options).Result;
+        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Tambah Pihak Terkait", parameters, options).Result;
         if (!dlg.Canceled)
         {
-            var result = await pihakTerkaitService.PostAsync(dlg.Data as PihakTerkaitRequest);
-            datas.Add(result);
+            var model = dlg.Data as PihakTerkaitRequest;
+            var result = await pihakTerkaitService.PostAsync(model);
+            if (result != null)
+            {
+                model.Id = result.Id;
+                model.UserId = result.UserId;
+                datas.Add(model);
+                await InvokeAsync(() => StateHasChanged());
+            }
         }
-
     }
 
     async Task Edit(PihakTerkaitRequest model)
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<EditPihakTerkaitPage> { { x => x.model, model } };
-        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Edit Distrik", parameters, options).Result;
+        var dlg = await Dialog.Show<EditPihakTerkaitPage>("Edit Pihak Terkait", parameters, options).Result;
         if (!dlg.Canceled)
         {
             var district = dlg.Data as PihakTerkaitRequest;

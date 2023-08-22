@@ -17,13 +17,13 @@ namespace BasarnasApp.Client.Validators
             RuleFor(x => x.Instansi).NotNull().WithMessage("Instansi Tida Boleh Kosong");
             RuleFor(x => x.District).NotNull().WithMessage("District Tida Boleh Kosong");
             RuleFor(request => request.Password)
-     .NotEmpty()
-     .MinimumLength(8).WithMessage("'{PropertyName}' Minimum Lenght of password 8.")
-     .Matches("[A-Z]").WithMessage("'{PropertyName}' must contain one or more capital letters.")
-     .Matches("[a-z]").WithMessage("'{PropertyName}' must contain one or more lowercase letters.")
-     .Matches(@"\d").WithMessage("'{PropertyName}' must contain one or more digits.")
-     .Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("'{ PropertyName}' must contain one or more special characters.")
-     .Matches("^[^£# “”]*$").WithMessage("'{PropertyName}' must not contain the following characters £ # “” or spaces.");
+             .NotEmpty()
+             .Length(8).WithMessage("'{PropertyName}' Lenght of password Must 8.")
+             .Matches("[A-Z]").WithMessage("'{PropertyName}' must contain one or more capital letters.")
+             .Matches("[a-z]").WithMessage("'{PropertyName}' must contain one or more lowercase letters.")
+             .Matches(@"\d").WithMessage("'{PropertyName}' must contain one or more digits.")
+             .Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("'{PropertyName}' must contain one or more special characters.")
+             .Matches("^[^£# “”]*$").WithMessage("'{PropertyName}' must not contain the following characters £ # “” or spaces.");
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>

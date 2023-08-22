@@ -14,9 +14,8 @@ namespace BasarnasApp.Server.Models
         public StatusPenganan Status { get; set; }
 
         public Penyebab Penyebab { get; set; }
-
+        public string? Lokasi { get;  set; }
         public string?  Deskripsi { get; set; }
-
     }
 
 }

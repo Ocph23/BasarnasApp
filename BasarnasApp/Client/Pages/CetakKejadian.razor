@@ -1,22 +1,37 @@
-﻿<div style="width:100%; margin-bottom:50px; display:flex;justify-content:center;flex-direction:column; align-items:center">
-    <h4>LAPORAN KEJADIAN </h4>
-    @if (Range != null)
-    {
-        <h3>@ShowDate()</h3>
-    }
+﻿<div style="width:100%">
+  <center>
+        <h2>LAPORAN PIHAK TERKAIT </h2>
+  </center>
+</div>
+
+<div style="display:flex">
+    <h4 style="width:100px">Pihak Terkait</h4>
+    <h4>: @Pihak</h4>
+</div>
+
+<div style="display:flex">
+    <h4 style="width:100px">Instans</h4>
+    <h4>: @Instansi</h4>
+</div>
+
+<div style="display:flex">
+    <h4 style="width:100px">Periode</h4>
+    <h4>:
+        @if (Range != null)
+        {
+          @ShowDate();
+        }
+    </h4>
 </div>
 
 
-
-<table class="table-cetak">
+<table style="margin-top:20px" class="table-cetak">
     <tr>
         <th>No</th>
-        <th>Kode</th>
-        <th>Tanggal</th>
-        <th>Distrik</th>
         <th>Kejadian</th>
+        <th>Tanggal</th>
+        <th>Lokasi</th>
         <th>Pelapor</th>
-        <th>Status</th>
     </tr>
     @if (Datas != null)
     {
@@ -25,12 +40,10 @@
             <tr>
 
                 <td>@(item.index + 1)</td>
-                <td>@item.Data.Kode</td>
+                <td>@item.Data.Kejadian</td>
                 <td>@item.Data.Tanggal</td>
-                <td>@item.Data.DistrictName</td>
-                <td>@item.Data.JenisKejadianName</td>
-                <td>@item.Data.PelaporName</td>
-                <td>@item.Data.Status</td>
+                <td>@item.Data.Lokasi</td>
+                <td>@item.Data.Pelapor</td>
             </tr>
         }
     }
@@ -38,15 +51,19 @@
 
 @code {
     [Parameter]
-    public IEnumerable<KejadianRequest> Datas { get; set; }
+    public IEnumerable<ReportKejadianModel> Datas { get; set; }
 
 
     [Parameter]
     public DateRange Range { get; set; }
 
+    [Parameter]
+    public string Instansi { get; set; }
 
+    [Parameter]
+    public string Pihak { get; set; }
 
-    public List<Penyebab> Penyebabs=> Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>().ToList();
+    public List<Penyebab> Penyebabs => Enum.GetValues(typeof(Penyebab)).Cast<Penyebab>().ToList();
 
 
     protected override Task OnInitializedAsync()

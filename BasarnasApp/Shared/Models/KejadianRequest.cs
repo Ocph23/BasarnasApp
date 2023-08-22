@@ -21,6 +21,7 @@ namespace BasarnasApp.Shared.Models
         public int  PelaporId { get; set; }
         public string? PelaporName { get; set; }= string.Empty;
         public byte[]? DataPhoto { get; set; } = default;
+        public string? Lokasi{ get; set; }
 
         
 

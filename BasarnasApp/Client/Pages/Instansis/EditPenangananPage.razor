@@ -17,6 +17,9 @@
                             <MudSelectItem Value="@item">@item.EnumToString()</MudSelectItem>
                         }
                     </MudSelect>
+                    <MudTextField Class="mt-2" @bind-Value="penanganan.Lokasi"
+                                  Immediate="true"
+                                  Label="Lokasi" />
                     <MudTextField Class="mt-2" Lines="5" @bind-Value="penanganan.Deskripsi"
                                   Immediate="true"
                                   Label="Deskripsi Penanganan" />
@@ -77,7 +80,6 @@
 
             if (updated)
             {
-                snackbar.Add("Berhasil ubah penanganan", MudBlazor.Severity.Success);
                 model.Status = penanganan.Status switch
                 {
                     StatusPenganan.Ditangani => StatusLaporan.Ditangani,

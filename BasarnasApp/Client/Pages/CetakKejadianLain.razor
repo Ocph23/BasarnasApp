@@ -66,6 +66,13 @@
 
     string ShowDate()
     {
+        if (Range == null || Range.Start==null)
+            return "";
+
+        if (Range.End == null)
+        {
+            return $"{DateOnly.FromDateTime(Range.Start.Value).ToString()} ";
+        }
 
         return $"{DateOnly.FromDateTime(Range.Start.Value).ToString()} - {DateOnly.FromDateTime(Range.End.Value).ToString()}";
     }

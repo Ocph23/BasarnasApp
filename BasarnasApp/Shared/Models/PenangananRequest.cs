@@ -12,6 +12,7 @@ namespace BasarnasApp.Shared.Models
 
         public StatusPenganan Status { get; set; }
 
+        public string? Lokasi { get; set; }
         public string? Deskripsi { get; set; }
         public Penyebab Penyebab { get; set; }
     }

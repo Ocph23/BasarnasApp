@@ -17,7 +17,7 @@
                     <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
                 </PickerActions>
             </MudDateRangePicker>
-            <MudButton OnClick="@(async()=> await js.InvokeVoidAsync("window.print"))" Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
+            <MudButton OnClick="Cetak" Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Print">Cetak</MudButton>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
 @if (_dateRange != null)
 {
     <div class="justprint">
-        <CetakKejadian Range="_dateRange" Datas="@GetData()"></CetakKejadian>
+        <CetakKejadianAdmin Tahun="tahun" Datas="reports"></CetakKejadianAdmin>
     </div>
 }
 
@@ -71,7 +71,8 @@
     ICollection<KejadianRequest> sources = new List<KejadianRequest>();
     MudDateRangePicker _picker;
     string search = string.Empty;
-
+    List<AdminReportModel> reports = new List<AdminReportModel>();
+    int tahun;
     protected override async void OnInitialized()
     {
         var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
@@ -85,6 +86,29 @@
         StateHasChanged();
     }
 
+    async Task Cetak()
+    {
+        reports.Clear();
+        tahun = DateTime.Now.Year;
+        var penanganans = await kejadianService.GePenanganan();
+        var grpByMount = penanganans.Where(x => x.Tanggal.Year == tahun).GroupBy(x => new { Bulan = x.Tanggal.Month, Tahun = x.Tanggal.Year });
+        foreach (var items in grpByMount)
+        {
+            var bulan = new AdminReportModel { Bulan = items.Key.Bulan, Tahun = items.Key.Tahun };
+            var grp = items.GroupBy(x => x.InstansiName);
+            int i = 1;
+            foreach (var item in grp)
+            {
+                var first = item.FirstOrDefault();
+                var model = new ReportModel { No = i, Instansi = item.Key, Kejadian = item.Count(), Kesatuan = first.Deskripsi, Tanggal = first.Tanggal };
+                bulan.Datas.Add(model);
+                i++;
+            }
+            reports.Add(bulan);
+        }
+        StateHasChanged();
+        await js.InvokeVoidAsync("window.print");
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {

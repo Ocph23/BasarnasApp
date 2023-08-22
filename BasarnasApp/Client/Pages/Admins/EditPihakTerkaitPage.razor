@@ -20,14 +20,17 @@
 
                         <MudTextField @bind-Value="model.Password"
                                       For="@(() => model.Password)"
-                                      Immediate="true"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@PasswordIcon"
+                                      OnAdornmentClick="AdornmentClick"
+                                      Immediate="true" InputType="@PasswordType"
                                       Label="Password" />
                     }
 
                     <MudSelect T="InstansiRequest" Label="Instansi"
                                For="@(()=>model.Instansi)"
                     @bind-Value="model.Instansi"
-                               ToStringFunc="@((x)=>x.Name)" 
+                               ToStringFunc="@((x)=>x.Name)"
                                AnchorOrigin="Origin.BottomCenter">
                         @foreach (var item in dataInstansi)
                         {
@@ -38,7 +41,7 @@
                     <MudSelect T="DistrictRequest" Label="District"
                     @bind-Value="model.District"
                                For="@(()=>model.District)"
-                               ToStringFunc="@((x)=>x.Name)"  AnchorOrigin="Origin.BottomCenter">
+                               ToStringFunc="@((x)=>x.Name)" AnchorOrigin="Origin.BottomCenter">
                         @foreach (var item in dataDistrict)
                         {
                             <MudSelectItem Value="@item" />
@@ -68,13 +71,12 @@
 
     [Parameter]
     public PihakTerkaitRequest model { get; set; }
-
     MudForm form;
     PihakTerkaitValidator validator = new PihakTerkaitValidator();
 
-    IEnumerable<InstansiRequest> dataInstansi;
-    IEnumerable<DistrictRequest> dataDistrict;
-
+    IEnumerable<InstansiRequest> dataInstansi = new List<InstansiRequest>();
+    IEnumerable<DistrictRequest> dataDistrict = new List<DistrictRequest>();
+   
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,6 +84,22 @@
         dataInstansi = await instansiService.GetAsync();
     }
 
+
+    string PasswordIcon = Icons.Material.Filled.VisibilityOff;
+    InputType PasswordType = InputType.Password;
+    async Task AdornmentClick()
+    {
+        if (PasswordType == InputType.Password)
+        {
+            PasswordType = InputType.Text;
+            PasswordIcon = Icons.Material.Filled.Visibility;
+        }
+        else
+        {
+            PasswordType = InputType.Password;
+            PasswordIcon = Icons.Material.Filled.VisibilityOff;
+        }
+    }
 
     void Submit()
     {

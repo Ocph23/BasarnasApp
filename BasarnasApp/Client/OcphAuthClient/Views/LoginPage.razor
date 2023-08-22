@@ -30,7 +30,7 @@
                </div>
                 <h1 class="mb-5">Login</h1>
                 <MudForm @ref="form" >
-                    <MudTextField T="string" Label="User Name" Required="true" RequiredError="Email is required!" 
+                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" 
                                         @bind-Value="loginRequest.UserName"
                                         Validation="@(new System.ComponentModel.DataAnnotations.EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
                               

@@ -159,7 +159,7 @@ public class KejadianService : IKejadianService
             var response = await _httpClient.PutAsJsonAsync<PenangananRequest>($"{controller}/penanganan/{t.Id}", t);
             if (response.IsSuccessStatusCode)
             {
-                _snackbar.Add("Data Berhasil Diubah.", Severity.Success);
+                _snackbar.Add("Penanganan Berhasil Diubah.", Severity.Success);
                 return await response.GetResult<bool>();
             }
             throw new SystemException(await response.GetError());

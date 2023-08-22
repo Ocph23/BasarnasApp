@@ -1,7 +1,4 @@
-using BasarnasApp.Shared.Models;
-using BasarnasMobilaApp.Models;
 using BasarnasMobilaApp.Services;
-using System.Collections.ObjectModel;
 
 namespace BasarnasMobilaApp.Pages;
 
@@ -30,8 +27,18 @@ public class LaporanViewModel : BaseViewModel
 
     private async Task ShowPhotoAction(object obj)
     {
+       
         var kejadian = (KejadianRequest)obj;
         var page = new PhotoViewPage($"/images/kejadian/{kejadian.Photo}");
+
+        //await Share.Default.RequestAsync(new ShareTextRequest
+        //{
+        //    Text = "Ini Text Dari Mana kek",
+        //    Title = "Share Text"    , 
+        //    Uri= $"{Helper.Url}/images/kejadian/{kejadian.Photo}"
+        //});
+
+
         await Shell.Current.Navigation.PushModalAsync(page);
     }
 

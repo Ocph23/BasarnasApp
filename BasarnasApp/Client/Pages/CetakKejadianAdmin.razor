@@ -1,0 +1,85 @@
+﻿<div style="width:100%">
+    <center>
+        <h2>LAPORAN KEJADIAN </h2>
+        <h4>
+          
+        </h4>
+    </center>
+</div>
+
+
+<div style="display:flex">
+    <h4 style="width:100px">Instans</h4>
+    <h4>: Basarnas</h4>
+</div>
+
+<div style="display:flex">
+    <h4 style="width:100px">Periode</h4>
+    <h4>
+        : @Tahun
+    </h4>
+</div>
+
+
+@foreach (var items in Datas)
+{
+    <h4 style="margin-top:20px">@($"{GetMountName(items.Bulan)} {items.Tahun}")</h4>
+    <table  class="table-cetak">
+        <tr>
+            <th>No</th>
+            <th>Instansi</th>
+            <th>Kejadian</th>
+            <th>Keterangan</th>
+        </tr>
+        @foreach (var item in items.Datas)
+        {
+            <tr>
+
+                <td style="text-align:center">@(item.No)</td>
+                <td>@item.Instansi</td>
+                <td style="text-align:center">@item.Kejadian</td>
+                <td>@item.Kesatuan</td>
+            </tr>
+        }
+    </table>
+}
+
+
+@code {
+ 
+    [Parameter]
+    public IEnumerable<AdminReportModel> Datas { get; set; }
+
+
+    [Parameter]
+    public int Tahun { get; set; }
+
+
+    protected override Task OnInitializedAsync()
+    {
+
+        return base.OnInitializedAsync();
+    }
+
+    string GetMountName(int bulan)
+    {
+        return bulan switch
+        {
+            1 => "Januari",
+            2 => "Februari",
+            3 => "Maret",
+            4 => "April",
+            5 => "Mei",
+            6 => "Juni",
+            7 => "Juli",
+            8 => "Agustus",
+            9 => "September",
+            10 => "Oktober",
+            11 => "Nopember",
+            12 => "Desember"
+        };
+    }
+
+}
+
+

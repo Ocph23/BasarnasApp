@@ -170,7 +170,7 @@ namespace BasarnasApp.Server.Services
             try
             {
                 var kejadian = (from a in _dbcontext.Kejadian
-                                .Include(x => x.Penanganan).ThenInclude(x=>x.PihakTerkait)
+                                .Include(x => x.Penanganan).ThenInclude(x => x.PihakTerkait)
                                 from b in a.Penanganan.Where(x => x.Id == model.Id)
                                 select a).SingleOrDefault();
                 var penanganan = kejadian.Penanganan.SingleOrDefault(x => x.Id == model.Id);
@@ -179,8 +179,9 @@ namespace BasarnasApp.Server.Services
 
                 penanganan.Status = model.Status;
                 penanganan.Penyebab = model.Penyebab;
+                penanganan.Lokasi = model.Lokasi;
                 penanganan.Deskripsi = model.Deskripsi;
-                if(penanganan.PihakTerkait == null)
+                if (penanganan.PihakTerkait == null)
                 {
                     penanganan.PihakTerkait = model.PihakTerkait;
                     _dbcontext.Entry(penanganan.PihakTerkait).State = EntityState.Unchanged;
@@ -216,13 +217,16 @@ namespace BasarnasApp.Server.Services
                 var penanganan = from a in _dbcontext.Kejadian.Include(x => x.Penanganan)
                                .ThenInclude(x => x.PihakTerkait)
                                .ThenInclude(x => x.Instansi)
-                                 from b in a.Penanganan.Where(x=>x.PihakTerkait.Id==pihakId)
+                                 from b in a.Penanganan.Where(x => x.PihakTerkait.Id == pihakId)
                                  select new PenangananModel
                                  {
                                      InstansiId = b.Instansi.Id,
                                      PihakTerkaitId = b.PihakTerkait.Id,
                                      Penyebab = b.Penyebab,
+                                     Lokasi = b.Lokasi,
+                                     Deskripsi = b.Deskripsi,
                                      Tanggal = a.Tanggal,
+                                     KejadianId = a.Id,
                                      Id = b.Id
                                  };
                 return Task.FromResult(penanganan.AsEnumerable());
@@ -239,14 +243,16 @@ namespace BasarnasApp.Server.Services
             try
             {
                 var penanganan = from a in _dbcontext.Kejadian.Include(x => x.Penanganan)
-                                 .ThenInclude(x => x.PihakTerkait)
                                  .ThenInclude(x => x.Instansi)
                                  from b in a.Penanganan
                                  select new PenangananModel
                                  {
                                      InstansiId = b.Instansi.Id,
-                                     PihakTerkaitId = b.PihakTerkait.Id,
+                                     KejadianId = a.Id,
+                                     InstansiName = b.Instansi.Name,
                                      Penyebab = b.Penyebab,
+                                     Lokasi = b.Lokasi,
+                                     Deskripsi = b.Deskripsi,
                                      Tanggal = a.Tanggal,
                                      Id = b.Id
                                  };
