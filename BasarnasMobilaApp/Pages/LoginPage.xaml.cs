@@ -19,6 +19,9 @@ public class LoginViewModel : BaseViewModel
     {
         GotoRegisterCommand = new Command(GotoRegisterAction);
         LoginCommand = new Command(LoginAction, LoginValidation);
+        IsPasswordCommand = new Command(IsPasswordAction);
+
+        
 
         this.PropertyChanged += (s, p) =>
         {
@@ -28,6 +31,12 @@ public class LoginViewModel : BaseViewModel
             }
         };
 
+    }
+
+    private void IsPasswordAction(object obj)
+    {
+        IsPassword = !IsPassword;
+        PasswordIcon = IsPassword ? "\uf06e" : "\uf070";
     }
 
     private async void LoginAction(object obj)
@@ -93,6 +102,26 @@ public class LoginViewModel : BaseViewModel
     }
 
 
+
+    private bool isPasword=true;
+
+    public bool IsPassword
+    {
+        get { return isPasword; }
+        set { SetProperty(ref isPasword , value); }
+    }
+
+
+    private string passwordIcon= "\uf070";
+
+    public string PasswordIcon
+    {
+        get { return passwordIcon; }
+        set { SetProperty(ref passwordIcon , value); }
+    }
+
+    public ICommand IsPasswordCommand { get; set; }
+
     public ICommand GotoRegisterCommand { get; set; }
 
     private ICommand loginCommand;
@@ -102,8 +131,9 @@ public class LoginViewModel : BaseViewModel
         get { return loginCommand; }
         set { SetProperty(ref loginCommand, value); }
     }
-}
 
+
+}
 
 
 public class LoginValidator : AbstractValidator<LoginViewModel>

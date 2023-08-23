@@ -24,9 +24,14 @@
             <Frame Style="{StaticResource inputFrame}" >
                 <StackLayout>
                     <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
-                    <Grid ColumnDefinitions="auto,*" >
+                    <Grid ColumnDefinitions="auto,*, auto" >
                         <Label  Style="{StaticResource Icon}" Text="&#xf023;"></Label>
-                        <Entry IsPassword="True" Grid.Column="1" Text="{Binding Password}"></Entry>
+                        <Entry IsPassword="{Binding IsPassword}" Grid.Column="1" Text="{Binding Password}"></Entry>
+                        <Label Grid.Column="2" Style="{StaticResource Icon}" Text="{Binding PasswordIcon}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding IsPasswordCommand}"></TapGestureRecognizer>
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Grid>
                 </StackLayout>
             </Frame>

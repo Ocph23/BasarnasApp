@@ -83,7 +83,7 @@ namespace BasarnasApp.Server.Services
             IQueryable<Kejadian> queryable = _dbcontext.Kejadian
                 .Include(x => x.District)
                 .Include(x => x.Pelapor)
-                .Include(x => x.JenisKejadian);
+                .Include(x => x.JenisKejadian).ThenInclude(x=>x.JenisInstansi).ThenInclude(x=>x.Instansi);
             if (await _userManager.IsInRoleAsync(user, "Instansi"))
             {
                 var pihakTerkait = _dbcontext.PihakTerkait.AsNoTracking()

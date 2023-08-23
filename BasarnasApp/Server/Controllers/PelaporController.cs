@@ -66,6 +66,20 @@ namespace BasarnasApp.Server.Controllers
             }
         }
 
+        [HttpPut("changepassword/{id}")]
+        public async Task<IActionResult> ChangePassword(string id, ChangeUserPasswordRequest request)
+        {
+            try
+            {
+                var result = await _pelaporService.ChangePassword(id, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Post(PelaporRequest request)

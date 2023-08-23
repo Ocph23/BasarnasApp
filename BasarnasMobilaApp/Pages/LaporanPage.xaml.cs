@@ -1,4 +1,6 @@
+using BasarnasApp.Shared.Models;
 using BasarnasMobilaApp.Services;
+using System.Collections.ObjectModel;
 
 namespace BasarnasMobilaApp.Pages;
 
@@ -36,7 +38,8 @@ public class LaporanViewModel : BaseViewModel
         //    Text = "Ini Text Dari Mana kek",
         //    Title = "Share Text"    , 
         //    Uri= $"{Helper.Url}/images/kejadian/{kejadian.Photo}"
-        //});
+        //})
+        //;
 
 
         await Shell.Current.Navigation.PushModalAsync(page);

@@ -33,13 +33,17 @@
                     <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" 
                                         @bind-Value="loginRequest.UserName"
                                         Validation="@(new System.ComponentModel.DataAnnotations.EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
-                              
-                    <MudTextField class="mt-5" T="string" Label="Password"
-                                            InputType="InputType.Password"
-                                            @bind-Value="loginRequest.Password"
-                                             Required="true"
-                                            RequiredError="Password is required!"/>
-                                
+
+
+                <MudTextField @bind-Value="loginRequest.Password"
+                              InputType="@PasswordType"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@PasswordIcon"
+                              OnAdornmentClick="@AdornmentClick"
+                              For="@(() => loginRequest.Password)"
+                              Immediate="true"
+                              Label="Konfirmasi Password" />
+
                     <MudButton class="mt-5" style="width: 100%;" Variant="Variant.Filled" Color="Color.Info" 
                                 DisableElevation="true" OnClick="OnValidSubmitAction">Login</MudButton>
                         </MudForm>   
@@ -88,6 +92,23 @@
             toasService.Add(ex.Message, MudBlazor.Severity.Error);
         }
     }
+
+    string PasswordIcon = Icons.Material.Filled.VisibilityOff;
+    InputType PasswordType = InputType.Password;
+    async Task AdornmentClick()
+    {
+        if (PasswordType == InputType.Password)
+        {
+            PasswordType = InputType.Text;
+            PasswordIcon = Icons.Material.Filled.Visibility;
+        }
+        else
+        {
+            PasswordType = InputType.Password;
+            PasswordIcon = Icons.Material.Filled.VisibilityOff;
+        }
+    }
+
 
     private IEnumerable<string> PasswordStrength(string pw)
     {

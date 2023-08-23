@@ -1,6 +1,7 @@
 ﻿using BasarnasApp.Server.Data;
 using BasarnasApp.Server.Models;
 using BasarnasApp.Server.Services.ServiceContracts;
+using BasarnasApp.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,37 @@ namespace BasarnasApp.Server.Services
 			_userManager = userManager;
 		}
 
-		public Task<bool> DeleteAsync(int id)
+
+        public async Task<bool> ChangePassword(string id, ChangeUserPasswordRequest t)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                //if (user.Email.ToLower() != t.Email.ToLower())
+                //{
+                //    var emailConfirmationCode = await _userManager.GenerateChangeEmailTokenAsync(user,t.Email);
+                //    var changeResult=  await _userManager.ChangeEmailAsync(user, t.Email, emailConfirmationCode);
+                //}
+
+                var changeResult = await _userManager.ChangePasswordAsync(user, t.OldPassword, t.NewPassword);
+                if (changeResult.Succeeded)
+                {
+                    return true;
+                }
+
+
+                var err = changeResult.Errors.FirstOrDefault();
+                if (err != null)
+                    throw new SystemException(err.Description);
+                throw new SystemException("Password Tidak Berhasil Diubah.");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public Task<bool> DeleteAsync(int id)
         {
             try
             {

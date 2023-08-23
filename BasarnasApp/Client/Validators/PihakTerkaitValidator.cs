@@ -18,7 +18,7 @@ namespace BasarnasApp.Client.Validators
             RuleFor(x => x.District).NotNull().WithMessage("District Tida Boleh Kosong");
             RuleFor(request => request.Password)
              .NotEmpty()
-             .Length(8).WithMessage("'{PropertyName}' Lenght of password Must 8.")
+             .MinimumLength(8).WithMessage("'{PropertyName}' Lenght of password Minimum 8.")
              .Matches("[A-Z]").WithMessage("'{PropertyName}' must contain one or more capital letters.")
              .Matches("[a-z]").WithMessage("'{PropertyName}' must contain one or more lowercase letters.")
              .Matches(@"\d").WithMessage("'{PropertyName}' must contain one or more digits.")

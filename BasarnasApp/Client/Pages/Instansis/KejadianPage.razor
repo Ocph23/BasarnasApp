@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <MudDataGrid Items="@datas.Where(x=> FilterDate(x.Tanggal)).OrderByDescending(x=>x.Tanggal).Select((x,i)=> new {Data=x, index=i})">
+    <MudDataGrid Items="@datas.Where(x=> FilterDate(x.Tanggal)).Select((x,i)=> new {Data=x, index=i})">
         <Columns>
             <TemplateColumn Title="Nomor" Style="width:50px">
                 <CellTemplate>
@@ -108,8 +108,9 @@
                 {
                     Kejadian = item.JenisKejadianName,
                     PihakTerkait = profile.Name,
-                    Tanggal = item.Tanggal, 
-                    Pelapor = item.PelaporName
+                    Tanggal = item.Tanggal,
+                    Pelapor = item.PelaporName, Lokasi = item.Lokasi,
+                    Status = item.Status.ToString()
                 };
 
             if (data != null)
@@ -144,7 +145,7 @@
         var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
         _dateRange = new DateRange(now, null);
         var result = await kejadianService.GetAsync();
-        foreach (var item in result)
+        foreach (var item in result.OrderBy(x=>x.Tanggal))
         {
             datas.Add(item);
         }

@@ -28,6 +28,7 @@
         public DateTime Tanggal { get; set; }
         public string PihakTerkait { get; set; }
         public string Lokasi { get; set; }
+        public string Status { get; set; }
         public string Pelapor { get; set; }
 
     }

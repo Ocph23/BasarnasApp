@@ -5,19 +5,20 @@
              Shell.NavBarIsVisible="False"
              BackgroundColor="WhiteSmoke"
              Padding="40" Title="RegisterPage">
-    <Grid RowDefinitions="auto, *">
+    <Grid RowDefinitions="auto,*" >
         <StackLayout VerticalOptions="Center">
-            <Frame WidthRequest="140" Padding="0" HeightRequest="150" CornerRadius="100" BorderColor="Gray" HasShadow="True">
+            <Frame WidthRequest="100" Padding="0" HeightRequest="100" CornerRadius="110" BorderColor="Gray" HasShadow="True">
                 <Image  Source="{Binding Photo}" HorizontalOptions="Fill" Aspect="Fill">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding TakePhotoCommand }"></TapGestureRecognizer>
                     </Image.GestureRecognizers>
                 </Image>
             </Frame>
-            <Label Margin="0,20" Text="Profile" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
+           
         </StackLayout>
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Grid.Row="1" VerticalOptions="Center">
+            <StackLayout  VerticalOptions="Center">
+                <Label Margin="0,20" Text="Profile" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
                 <Frame Style="{StaticResource inputFrame}" >
                     <StackLayout>
                         <Label Style="{StaticResource inputLabel}" Text="Nama"></Label>
@@ -56,7 +57,56 @@
                 </Frame>
                 <ActivityIndicator HeightRequest="35" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
                 <Button Margin="0,20" Text="Simpan" Command="{Binding UpdateProfileCommand}"></Button>
-            </VerticalStackLayout>
+
+
+                <Label Margin="0,20" Text="Ubah Password" FontAttributes="Bold" FontFamily="Montserrat" FontSize="20"></Label>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
+                        <Grid ColumnDefinitions="auto,*, auto" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf023;"></Label>
+                            <Entry IsPassword="{Binding IsPassword}" Grid.Column="1" Text="{Binding Password.OldPassword}"></Entry>
+                            <Label Grid.Column="2" Style="{StaticResource Icon}" Text="{Binding PasswordIcon}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding IsPasswordCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
+                        <Grid ColumnDefinitions="auto,*, auto" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf023;"></Label>
+                            <Entry IsPassword="{Binding IsPassword}" Grid.Column="1" Text="{Binding Password.NewPassword}"></Entry>
+                            <Label Grid.Column="2" Style="{StaticResource Icon}" Text="{Binding PasswordIcon}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding IsPasswordCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame Style="{StaticResource inputFrame}" >
+                    <StackLayout>
+                        <Label Style="{StaticResource inputLabel}" Text="Password"></Label>
+                        <Grid ColumnDefinitions="auto,*, auto" >
+                            <Label  Style="{StaticResource Icon}" Text="&#xf023;"></Label>
+                            <Entry IsPassword="{Binding IsPassword}" Grid.Column="1" Text="{Binding Password.ConfirmPassword}"></Entry>
+                            <Label Grid.Column="2" Style="{StaticResource Icon}" Text="{Binding PasswordIcon}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding IsPasswordCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                
+                <ActivityIndicator WidthRequest="35" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"></ActivityIndicator>
+                <Label Text="{Binding PasswordMessageError}" TextColor="Red" FontSize="Micro"></Label>
+                <Button Margin="0,20" Text="Ubah Password" Command="{Binding ChangePasswordCommand}"></Button>
+            </StackLayout>
         </ScrollView>
     </Grid>
 </ContentPage>

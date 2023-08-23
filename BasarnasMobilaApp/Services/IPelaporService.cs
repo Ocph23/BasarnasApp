@@ -1,4 +1,5 @@
 ﻿using BasarnasMobilaApp.Models;
+using BasarnasMobilaApp.Pages;
 
 namespace BasarnasMobilaApp.Services
 {
@@ -9,5 +10,6 @@ namespace BasarnasMobilaApp.Services
         Task<Pelapor> PostAsync(Pelapor t);
         Task<bool> PutAsync(int id, Pelapor t);
         Task<bool> DeleteAsync(int id);
+        Task<bool> ChangePassword(ChangePassword password);
     }
 }

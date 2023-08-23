@@ -49,8 +49,8 @@ namespace BasarnasApp.Server.Controllers
                                PelaporName = a.Pelapor.Name,
                                Photo = a.Photo,
                                Status = a.Status,
-                               Tanggal = a.Tanggal,
-
+                               Tanggal = a.Tanggal,  
+                               Instansi = a.JenisKejadian.JenisInstansi.Select(x=>x.Instansi.Name).ToList()
                            };
                 return Ok(data);
             }

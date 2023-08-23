@@ -22,9 +22,7 @@ namespace BasarnasApp.Shared.Models
         public string? PelaporName { get; set; }= string.Empty;
         public byte[]? DataPhoto { get; set; } = default;
         public string? Lokasi{ get; set; }
-
-        
-
+        public IEnumerable<string> Instansi { get; set; } = new List<string>();
 
     }
 }

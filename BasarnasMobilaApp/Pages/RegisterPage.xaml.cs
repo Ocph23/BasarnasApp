@@ -25,6 +25,7 @@ public class RegisterViewModel : BaseViewModel
         validator = new RegisterValidator();
         GotoLoginCommand = new Command(GotoLoginAction);
         RegisterCommand = new Command(RegisterAction, RegiterValidate);
+        IsPasswordCommand = new Command(IsPasswordAction);
         Model.PropertyChanged += (s, p) =>
         {
             RegisterCommand = new Command(RegisterAction, RegiterValidate);
@@ -98,6 +99,34 @@ public class RegisterViewModel : BaseViewModel
         get { return registerCommand; }
         set { SetProperty(ref registerCommand, value); }
     }
+    
+
+    private void IsPasswordAction(object obj)
+    {
+        IsPassword = !IsPassword;
+        PasswordIcon = IsPassword ? "\uf06e" : "\uf070";
+    }
+
+    private bool isPasword = true;
+
+    public bool IsPassword
+    {
+        get { return isPasword; }
+        set { SetProperty(ref isPasword, value); }
+    }
+
+
+    private string passwordIcon = "\uf070";
+
+    public string PasswordIcon
+    {
+        get { return passwordIcon; }
+        set { SetProperty(ref passwordIcon, value); }
+    }
+
+    public ICommand IsPasswordCommand { get; set; }
+
+
 
     private string errorMessage;
 
@@ -120,7 +149,14 @@ public class RegisterValidator : AbstractValidator<Pelapor>
             .EmailAddress().WithMessage("Masukkan Email Anda !");
         RuleFor((x) => x.PhoneNumber).NotEmpty().WithMessage("Nomor HP Tidak Boleh Kosong");
         RuleFor((x) => x.Address).NotEmpty().WithMessage("Alamat tidak boleh kosong !");
-        RuleFor((x) => x.Password).NotEmpty().WithMessage("Password Tidak Boleh Kosong!");
+        RuleFor(request => request.Password)
+             .NotEmpty()
+             .MinimumLength(8).WithMessage("'{PropertyName}' Minimum 8 Karakter.")
+             .Matches("[A-Z]").WithMessage("'{PropertyName}' Harus terdapat huruf kapital.")
+             .Matches("[a-z]").WithMessage("'{PropertyName}' Harus terdapat huruf kecil.")
+             .Matches(@"\d").WithMessage("'{PropertyName}' Harus terdapat angka.")
+             .Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("'{PropertyName}' harus terdapat karakter spesial.")
+             .Matches("^[^£# “”]*$").WithMessage("'{PropertyName}' tidak boleh tedapat £ # “” or spasi.");
         RuleFor((x) => x.ConfirmPassoword)
             .NotEmpty().WithMessage("Confirm Password Tidak Boleh Kosong! !")
             .Equal(x => x.Password).WithMessage("Password Harus Sama");

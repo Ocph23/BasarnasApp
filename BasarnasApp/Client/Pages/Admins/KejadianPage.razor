@@ -137,7 +137,7 @@
             xdata = xdata.Where(x => FilterDate(x.Tanggal));
         }
 
-        return xdata;
+        return xdata.OrderBy(x=>x.Tanggal);
     }
 
 

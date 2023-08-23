@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using BasarnasMobilaApp.Models;
+using BasarnasMobilaApp.Pages;
 
 namespace BasarnasMobilaApp.Services;
 
@@ -86,6 +87,23 @@ public class PelaporService : IPelaporService
         {
            
            return false;
+        }
+    }
+
+    public async Task<bool> ChangePassword(ChangePassword password)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync<ChangePassword>($"{controller}/changepassword/{password.UserId}", password);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.GetResult<bool>();
+            }
+            throw new SystemException(await response.GetError());
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 }
