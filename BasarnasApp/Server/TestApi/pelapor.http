@@ -61,3 +61,14 @@ content-type: application/json
 }
 
 
+###############
+POST https://restsimak.stimiksepnop.ac.id/api/users/login HTTP/1.1
+content-type: application/json
+
+{
+    "Username": "kristt26",
+    "password": "stimik1011"
+}
+
+###
+

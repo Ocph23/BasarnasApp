@@ -18,13 +18,22 @@ namespace BasarnasApp.Server.Services
             _userManager = userManager;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
-                var data = _dbcontext.PihakTerkait
+                var data = _dbcontext.PihakTerkait.AsNoTracking().FirstOrDefault(x => x.Id == id);
+                var result = _dbcontext.PihakTerkait
                     .Where(x => x.Id == id).ExecuteDelete();
-                return Task.FromResult(data > 0);
+                if (result > 0)
+                {
+                    var user = await _userManager.FindByIdAsync(data.UserId);
+                    if (user != null)
+                    {
+                       await _userManager.DeleteAsync(user);
+                    }
+                }
+                return result > 0;
             }
             catch (Exception)
             {

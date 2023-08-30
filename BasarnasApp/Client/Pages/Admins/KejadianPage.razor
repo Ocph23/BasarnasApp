@@ -37,7 +37,7 @@
             <TemplateColumn Context="item" style="width:70px">
                 <CellTemplate>
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert">
-                        <MudMenuItem OnClick="@(()=>UbahStatus(item.Item.Data))" Icon="@Icons.Material.Filled.ChangeCircle" Variant="Variant.Filled" Color="Color.Warning">Ubah Status</MudMenuItem>
+                        <MudMenuItem OnClick="@(()=>UbahStatus(item.Item.Data))" Icon="@Icons.Material.Filled.ChangeCircle" Variant="Variant.Filled" Color="Color.Warning">Status</MudMenuItem>
                         @if (!string.IsNullOrEmpty(item.Item.Data.LongLat))
                         {
                             <MudMenuItem OnClick="@(()=>ShowMap(item.Item.Data))" Icon="@Icons.Material.Filled.Map" Variant="Variant.Filled" Color="Color.Info">Map</MudMenuItem>
